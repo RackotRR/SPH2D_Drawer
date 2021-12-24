@@ -6,9 +6,10 @@
 
 #include "ScrollBar.h"
 #include "Axis.h"
+#include "Particle.h"
 
 using Square = std::pair<std::pair<double, double>, std::pair<double, double>>;
-using TimeLayer = std::set<std::pair<double, double>>; 
+using TimeLayer = std::multiset<Particle>; 
 using Grid = std::vector<TimeLayer>;
 
 class RRGrapher {
@@ -37,11 +38,11 @@ private:
 	Grid grid;
 	Square area;
 	
-	double particleSize;
+	double particleSize{};
 	double scaleCoord{ 1 }; 
 	double deltaX{};
 	double deltaY{};
 
 	size_t currentT{};
-	size_t maxT{};   
+	size_t maxT{};
 };

@@ -162,6 +162,7 @@
   <ItemGroup>
     <ClInclude Include="Axis.h" />
     <ClInclude Include="Mouse.h" />
+    <ClInclude Include="Particle.h" />
     <ClInclude Include="Rectangle.h" />
     <ClInclude Include="RRColor.h" />
     <ClInclude Include="RRController.h" />

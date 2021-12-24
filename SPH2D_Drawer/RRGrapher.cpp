@@ -11,6 +11,7 @@ RRGrapher& RRGrapher::Instance() {
 	return instance;
 }
 
+
 void RRGrapher::Show(Grid&& gridR, Square area, double particleSize) {
 	auto& gameIO{ RRGameIO::Instance() };
 	try { 
@@ -18,8 +19,10 @@ void RRGrapher::Show(Grid&& gridR, Square area, double particleSize) {
 
 		this->grid = std::move(gridR);
 		this->maxT = grid.size(); // кол-во временных слоёв 
+		this->currentT = 0;
 		this->area = area;
 		this->particleSize = particleSize;
+		this->passedTime = 0;
 		// должен быть хотя бы один временной слой
 		if (maxT == 0) {
 			throw std::runtime_error("Grid had no time layers!");
@@ -107,11 +110,14 @@ void RRGrapher::DrawLayer() const {
 	//}
 	//auto& [xc, yc] = *iter;
 	//gameIO.DrawCircle(Vector2{ toScreenX(xc), toScreenY(yc) }, particleSize * 3 * scaleCoord, RRColor::Black());
+
+	constexpr RRColor realColor = RRColor::Blue();
+	constexpr RRColor virtualColor = RRColor::Red();
 	 
 	// рисуем круги
-	for (auto& [x, y] : layer) {
+	for (auto& [x, y, type] : layer) {
 		Vector2 pos{ toScreenX(x), toScreenY(y) };
-		gameIO.DrawPoint(pos, RRColor::Blue()); 
+		gameIO.DrawPoint(pos, type == 2 ? realColor : virtualColor); 
 		//if (x == xc && y == yc) {
 		//	gameIO.DrawCircleFill(pos, 7, RRColor::Black());
 		//}
@@ -227,7 +233,7 @@ void RRGrapher::RunWindowCycle() {
 		}
 		if (keyState.IsKeyDown(RRKeyboardState::Keys::Z)) {
 			timeToLayer -= 2;
-			if (timeToLayer < 4) timeToLayer = 4;
+			if (timeToLayer < 2) timeToLayer = 2;
 			std::cout << "timeToLayer: " << timeToLayer << std::endl;
 		}
 		if (keyState.IsKeyDown(RRKeyboardState::Keys::X)) {
