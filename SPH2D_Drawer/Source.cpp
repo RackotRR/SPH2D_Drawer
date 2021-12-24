@@ -31,7 +31,7 @@ auto ReadGridAndParams() {
 			int type;
 			stream >> x >> y;
 			stream >> type;
-			if (type != 0) {
+			if (type > -INFINITY) {
 				layer.emplace(x, y);
 			}
 		}

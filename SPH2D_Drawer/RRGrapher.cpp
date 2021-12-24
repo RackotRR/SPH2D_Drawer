@@ -64,31 +64,63 @@ void RRGrapher::DrawLayer() const {
 	gameIO.DrawLineSegment(
 		Vector2{ toScreenX(x0), toScreenY(y0) },
 		Vector2{ toScreenX(x1), toScreenY(y0) }, 
-		RRColor::White());
+		RRColor::Black());
 	// bot
 	gameIO.DrawLineSegment(
 		Vector2{ toScreenX(x0), toScreenY(y1) },
 		Vector2{ toScreenX(x1), toScreenY(y1) }, 
-		RRColor::White());
+		RRColor::Black());
 	// left
 	gameIO.DrawLineSegment(
 		Vector2{ toScreenX(x0), toScreenY(y0) },
-		Vector2{toScreenX(x0), toScreenY(y1)},
-		RRColor::White()
+		Vector2{ toScreenX(x0), toScreenY(y1) },
+		RRColor::Black()
 	);
 	// right
 	gameIO.DrawLineSegment(
 		Vector2{ toScreenX(x1), toScreenY(y0) },
-		Vector2{toScreenX(x1), toScreenY(y1)},
-		RRColor::White()
+		Vector2{ toScreenX(x1), toScreenY(y1) },
+		RRColor::Black()
 	);
+
+	//double nBlocksX( size.first / (particleSize * 3) );
+	//double nBlocksY( size.second / (particleSize * 3) );
+	//double blockSize( particleSize * 3 );
+	//for (size_t i{}; i < nBlocksX; i++) {
+	//	gameIO.DrawLineSegment(
+	//		Vector2{ toScreenX(x0 + blockSize * i), toScreenY(y0) },
+	//		Vector2{ toScreenX(x0 + blockSize * i), toScreenY(y1) },
+	//		RRColor::White());
+	//}
+	//for (size_t i{}; i < nBlocksY; i++) {
+	//	gameIO.DrawLineSegment(
+	//		Vector2{ toScreenX(x0), toScreenY(y0 + blockSize * i) },
+	//		Vector2{ toScreenX(x1), toScreenY(y0 + blockSize * i) },
+	//		RRColor::White());
+	//}
+
+	//size_t sizeL{ layer.size() };
+	//size_t index = sizeL / 6;
+	//auto iter = layer.begin();
+	//for (size_t i{}; i < index; i++) {
+	//	iter++;
+	//}
+	//auto& [xc, yc] = *iter;
+	//gameIO.DrawCircle(Vector2{ toScreenX(xc), toScreenY(yc) }, particleSize * 3 * scaleCoord, RRColor::Black());
 	 
 	// рисуем круги
 	for (auto& [x, y] : layer) {
 		Vector2 pos{ toScreenX(x), toScreenY(y) };
-		//gameIO.DrawPoint(pos, RRColor::Blue());
-		gameIO.DrawCircleFill(pos, 7, RRColor::Blue());
+		gameIO.DrawPoint(pos, RRColor::Blue()); 
+		//if (x == xc && y == yc) {
+		//	gameIO.DrawCircleFill(pos, 7, RRColor::Black());
+		//}
+		// else { 
+		//gameIO.DrawCircle(Vector2{ toScreenX(x), toScreenY(y) }, particleSize * scaleCoord, RRColor::Blue());
+			//gameIO.DrawCircle(pos, 5, RRColor::Blue());
+		// }
 	}
+
 	//// –исовка точками
 	//for (auto& [x, y] : layer) {
 	//	Vector2 pos{ toScreenX(x), toScreenY(y) };
@@ -138,9 +170,7 @@ void RRGrapher::ComputeStartScale() {
 	}
 
 	deltaX = startX - areaX * scaleCoord;
-	deltaY = startY - areaY * scaleCoord; 
-
-	timeScroll.Set({ 3, 94, 80, 6 }, maxT - 1); 
+	deltaY = startY - areaY * scaleCoord;  
 }
 
 void RRGrapher::Stop() {
@@ -171,17 +201,53 @@ void RRGrapher::RunWindowCycle() {
 		}
 
 		auto& keyState{ controller.GetKeyState() };
-		if (keyState.IsKeyDown(RRKeyboardState::Keys::Q)) {
+		if (keyState.Click(RRKeyboardState::Keys::Q)) {
 			scaleCoord *= 1.1;
 		}
-		if (keyState.IsKeyDown(RRKeyboardState::Keys::E)) {
+		if (keyState.Click(RRKeyboardState::Keys::E)) {
 			scaleCoord *= 0.9;
 		}
 		if (keyState.Click(RRKeyboardState::Keys::ENTER)) {
 			autoPlay = true;
 			currentT = 0;
 		}
+		if (keyState.Click(RRKeyboardState::Keys::SPACE)) {
+			autoPlay = !autoPlay;
+		}
+		if (keyState.Click(RRKeyboardState::Keys::D) || keyState.IsKeyDown(RRKeyboardState::Keys::W)) {
+			if (currentT < maxT - 1)
+				currentT++;
+			std::cout << "currentT: " << currentT << " / " << maxT << std::endl;
+		}
+		if (keyState.Click(RRKeyboardState::Keys::A) || keyState.IsKeyDown(RRKeyboardState::Keys::S)) {
+			if (currentT > 0) {
+				currentT--;
+			}
+			std::cout << "currentT: " << currentT << " / " << maxT << std::endl;
+		}
+		if (keyState.IsKeyDown(RRKeyboardState::Keys::Z)) {
+			timeToLayer -= 2;
+			if (timeToLayer < 4) timeToLayer = 4;
+			std::cout << "timeToLayer: " << timeToLayer << std::endl;
+		}
+		if (keyState.IsKeyDown(RRKeyboardState::Keys::X)) {
+			timeToLayer += 2;
+			std::cout << "timeToLayer: " << timeToLayer << std::endl;
+		}
 
+		double speed = 3;
+		if (keyState.IsKeyDown(RRKeyboardState::Keys::I)) {
+			deltaY -= speed;
+		}
+		if (keyState.IsKeyDown(RRKeyboardState::Keys::K)) {
+			deltaY += speed;
+		}
+		if (keyState.IsKeyDown(RRKeyboardState::Keys::J)) {
+			deltaX += speed;
+		}
+		if (keyState.IsKeyDown(RRKeyboardState::Keys::L)) {
+			deltaX -= speed;
+		}
 
 		if (autoPlay) {
 			passedTime += gameTime.GetPassedTime();
@@ -193,12 +259,8 @@ void RRGrapher::RunWindowCycle() {
 					autoPlay = false;
 				}
 			}
-		}
-		else {
-			timeScroll.Update(controller.GetMouseState());
-			currentT = timeScroll.GetValue();
-		}
-		gameIO.Begin();
+		} 
+		gameIO.Begin(RRColor::Black());
 		/* отрисовка всего и вс€ */  
 		DrawLayer();
 		//timeScroll.Draw();  

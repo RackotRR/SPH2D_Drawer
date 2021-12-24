@@ -4,7 +4,7 @@
 */
 struct RRColor {
 	constexpr RRColor() : RRColor{ 0, 0, 0, 255 } {}
-	constexpr RRColor(unsigned char r, unsigned char g, unsigned char b) : RRColor{ r, g, b, 255} {}
+	constexpr RRColor(unsigned char r, unsigned char g, unsigned char b) : RRColor{ r, g, b, 255 } {}
 	constexpr RRColor(unsigned char r, unsigned char g, unsigned char b, unsigned char a) : r{ r }, g{ g }, b{ b }, a{ a } {}
 	
 	unsigned char r, g, b, a; 

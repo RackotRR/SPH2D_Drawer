@@ -25,7 +25,7 @@ public:
 	virtual void Initialize() = 0;
 	virtual void Shutdown() = 0;
 
-	virtual void Begin() = 0;
+	virtual void Begin(RRColor clearColor) = 0;
 	virtual void End() = 0;
 	 
 	virtual int GetWinWidth() const = 0;
@@ -51,6 +51,8 @@ public:
 	virtual void DrawPoint(const Vector2& position, const RRColor& color) = 0;
 
 	virtual void DrawCircleFill(const Vector2& center, double radius, const RRColor& color) = 0;
+
+	virtual void DrawCircle(const Vector2& center, double radius, const RRColor& color) = 0;
 
 	virtual RRTexture LoadTextureFromFile(std::string_view path) = 0;
 protected:

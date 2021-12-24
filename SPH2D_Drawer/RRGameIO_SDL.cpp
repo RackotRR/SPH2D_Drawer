@@ -42,7 +42,7 @@ void RRGameIO_SDL::Initialize() {
 	}
 
 	// режим прозрачности
-	if (SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_ADD) != 0) { 
+	if (SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND) != 0) { 
 		throw std::runtime_error{ "Failed to set render draw blend mode: " + std::string{ SDL_GetError() } };
 	}
 
@@ -70,10 +70,11 @@ void RRGameIO_SDL::Shutdown() {
 	SDL_Quit();
 }
 
-void RRGameIO_SDL::Begin() {
+void RRGameIO_SDL::Begin(RRColor clearColor) {
 	assert(IsInitialized);
+	auto& [r, g, b, a] = clearColor;
 
-	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+	SDL_SetRenderDrawColor(renderer, r, g, b, a);
 	SDL_RenderClear(renderer);
 }
 void RRGameIO_SDL::End() {
@@ -165,8 +166,8 @@ void RRGameIO_SDL::DrawPoint(const Vector2& position, const RRColor& color) {
 	assert(IsInitialized);
 
 	SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
-	SDL_RenderDrawLine(renderer, position.X - 1, position.Y, position.X + 1, position.Y);
-	SDL_RenderDrawLine(renderer, position.X, position.Y - 1, position.X, position.Y + 1);
+	SDL_RenderDrawLine(renderer, position.X - 2, position.Y, position.X + 2, position.Y);
+	SDL_RenderDrawLine(renderer, position.X, position.Y - 2, position.X, position.Y + 2);
 }
 
 void RRGameIO_SDL::DrawCircleFill(const Vector2& center, double radius, const RRColor& color) {
@@ -183,6 +184,25 @@ void RRGameIO_SDL::DrawCircleFill(const Vector2& center, double radius, const RR
 		int x{ static_cast<int>(radius * cos(angle)) };
 		int y{ static_cast<int>(radius * sin(angle)) }; 
 		SDL_RenderDrawLine(renderer, center.X + x, center.Y + y, center.X + x, center.Y - y); 
+	}
+}
+
+void RRGameIO_SDL::DrawCircle(const Vector2& center, double radius, const RRColor& color) {
+	assert(IsInitialized);
+	 
+	SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
+	
+	double deltaAngle{ 1.0 / radius};
+	if (deltaAngle <= 0) {
+		throw std::runtime_error{ "DrawCirlceFill: Wrong delta angle" };
+	}
+
+	for (double angle{}; angle < M_PI; angle += deltaAngle) {
+		int x{ static_cast<int>(radius * cos(angle)) };
+		int y{ static_cast<int>(radius * sin(angle)) }; 
+		//SDL_RenderDrawLine(renderer, center.X + x, center.Y + y, center.X + x, center.Y - y); 
+		SDL_RenderDrawPoint(renderer, center.X + x, center.Y + y);
+		SDL_RenderDrawPoint(renderer, center.X + x, center.Y - y);
 	}
 }
 

@@ -83,7 +83,7 @@ public:
         }
     }
 private:
-    static constexpr int MaxArraySize{ 44 };
+    static constexpr int MaxArraySize{ 45 };
     std::array<unsigned char, MaxArraySize> keys, oldKeys; 
 };
 

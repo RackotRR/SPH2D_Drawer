@@ -8,7 +8,7 @@ public:
 	void Initialize() override;
 	void Shutdown() override;
 
-	void Begin() override;
+	void Begin(RRColor clearColor) override;
 	void End() override;
 
 
@@ -34,6 +34,8 @@ public:
 	void DrawPoint(const Vector2& position, const RRColor& color) override;
 
 	void DrawCircleFill(const Vector2& center, double radius, const RRColor& color) override;
+
+	void DrawCircle(const Vector2& center, double radius, const RRColor& color) override;
 
 	RRTexture LoadTextureFromFile(std::string_view path) override;
 private: 

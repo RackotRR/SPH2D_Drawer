@@ -30,8 +30,8 @@ private:
 
 	bool shallStop{ false };
 
-	bool autoPlay{ true };
-	unsigned timeToLayer{ 20 };
+	bool autoPlay{ false };
+	unsigned timeToLayer{ 50 };
 	unsigned passedTime{};
 	  
 	Grid grid;
@@ -43,7 +43,5 @@ private:
 	double deltaY{};
 
 	size_t currentT{};
-	size_t maxT{};  
-
-	ScrollBar timeScroll;  
+	size_t maxT{};   
 };
