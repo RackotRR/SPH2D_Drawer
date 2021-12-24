@@ -183,13 +183,73 @@ void RRGrapher::Stop() {
 	shallStop = true;
 }
 
+void RRGrapher::UpdateControls() {
+	auto& controller{ RRController::Instance() };
+
+	auto& mouseState{ controller.GetMouseState() };
+	if (mouseState.RightButton == Mouse::State::Pressed) {
+		Vector2 deltaPos{ mouseState.Position - mouseState.PrevPosition };
+		deltaX += deltaPos.X;
+		deltaY -= deltaPos.Y;
+	}
+
+	auto& keyState{ controller.GetKeyState() };
+	if (keyState.Click(RRKeyboardState::Keys::Q)) {
+		scaleCoord *= 1.1;
+	}
+	if (keyState.Click(RRKeyboardState::Keys::E)) {
+		scaleCoord *= 0.9;
+	}
+	if (keyState.Click(RRKeyboardState::Keys::ENTER)) {
+		autoPlay = true;
+		currentT = 0;
+	}
+	if (keyState.Click(RRKeyboardState::Keys::SPACE)) {
+		autoPlay = !autoPlay;
+	}
+	if (keyState.Click(RRKeyboardState::Keys::D) || keyState.IsKeyDown(RRKeyboardState::Keys::W)) {
+		if (currentT < maxT - 1)
+			currentT++;
+		std::cout << "currentT: " << currentT << " / " << maxT << std::endl;
+	}
+	if (keyState.Click(RRKeyboardState::Keys::A) || keyState.IsKeyDown(RRKeyboardState::Keys::S)) {
+		if (currentT > 0) {
+			currentT--;
+		}
+		std::cout << "currentT: " << currentT << " / " << maxT << std::endl;
+	}
+	if (keyState.IsKeyDown(RRKeyboardState::Keys::Z)) {
+		timeToLayer -= 2;
+		if (timeToLayer < 2) timeToLayer = 2;
+		std::cout << "timeToLayer: " << timeToLayer << std::endl;
+	}
+	if (keyState.IsKeyDown(RRKeyboardState::Keys::X)) {
+		timeToLayer += 2;
+		std::cout << "timeToLayer: " << timeToLayer << std::endl;
+	}
+
+	double speed = 3;
+	if (keyState.IsKeyDown(RRKeyboardState::Keys::I)) {
+		deltaY -= speed;
+	}
+	if (keyState.IsKeyDown(RRKeyboardState::Keys::K)) {
+		deltaY += speed;
+	}
+	if (keyState.IsKeyDown(RRKeyboardState::Keys::J)) {
+		deltaX += speed;
+	}
+	if (keyState.IsKeyDown(RRKeyboardState::Keys::L)) {
+		deltaX -= speed;
+	}
+}
+
 void RRGrapher::RunWindowCycle() { 
 	auto& controller{ RRController::Instance() };
 	auto& gameTime{ RRGameTime::Instance() };
 	auto& gameIO{ RRGameIO::Instance() };
 	 
 
-	controller.Update();
+	//controller.Update();
 	do {
 		controller.Update();
 		gameTime.Update();
@@ -198,62 +258,8 @@ void RRGrapher::RunWindowCycle() {
 			Stop();
 		}
 		 
-		   
-		auto& mouseState{ controller.GetMouseState() };
-		if (mouseState.RightButton == Mouse::State::Pressed) {
-			Vector2 deltaPos{ mouseState.Position - mouseState.PrevPosition };
-			deltaX += deltaPos.X;
-			deltaY -= deltaPos.Y;
-		}
-
-		auto& keyState{ controller.GetKeyState() };
-		if (keyState.Click(RRKeyboardState::Keys::Q)) {
-			scaleCoord *= 1.1;
-		}
-		if (keyState.Click(RRKeyboardState::Keys::E)) {
-			scaleCoord *= 0.9;
-		}
-		if (keyState.Click(RRKeyboardState::Keys::ENTER)) {
-			autoPlay = true;
-			currentT = 0;
-		}
-		if (keyState.Click(RRKeyboardState::Keys::SPACE)) {
-			autoPlay = !autoPlay;
-		}
-		if (keyState.Click(RRKeyboardState::Keys::D) || keyState.IsKeyDown(RRKeyboardState::Keys::W)) {
-			if (currentT < maxT - 1)
-				currentT++;
-			std::cout << "currentT: " << currentT << " / " << maxT << std::endl;
-		}
-		if (keyState.Click(RRKeyboardState::Keys::A) || keyState.IsKeyDown(RRKeyboardState::Keys::S)) {
-			if (currentT > 0) {
-				currentT--;
-			}
-			std::cout << "currentT: " << currentT << " / " << maxT << std::endl;
-		}
-		if (keyState.IsKeyDown(RRKeyboardState::Keys::Z)) {
-			timeToLayer -= 2;
-			if (timeToLayer < 2) timeToLayer = 2;
-			std::cout << "timeToLayer: " << timeToLayer << std::endl;
-		}
-		if (keyState.IsKeyDown(RRKeyboardState::Keys::X)) {
-			timeToLayer += 2;
-			std::cout << "timeToLayer: " << timeToLayer << std::endl;
-		}
-
-		double speed = 3;
-		if (keyState.IsKeyDown(RRKeyboardState::Keys::I)) {
-			deltaY -= speed;
-		}
-		if (keyState.IsKeyDown(RRKeyboardState::Keys::K)) {
-			deltaY += speed;
-		}
-		if (keyState.IsKeyDown(RRKeyboardState::Keys::J)) {
-			deltaX += speed;
-		}
-		if (keyState.IsKeyDown(RRKeyboardState::Keys::L)) {
-			deltaX -= speed;
-		}
+		UpdateControls();
+		
 
 		if (autoPlay) {
 			passedTime += gameTime.GetPassedTime();

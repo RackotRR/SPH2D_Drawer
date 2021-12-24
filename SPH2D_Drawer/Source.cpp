@@ -37,11 +37,9 @@ auto ReadGridAndParams(std::string_view filePath) {
 			int type;
 			stream >> x >> y;
 			stream >> type;
-			if (type > -INFINITY) {
-				layer.emplace(x, y, type);
-			}
+			layer.emplace(x, y, type);
 		}
-		grid.push_back(layer);
+		grid.push_back(std::move(layer));
 	}
 
 	return std::make_tuple(grid, square, dx);

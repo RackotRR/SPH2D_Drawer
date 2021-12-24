@@ -24,6 +24,7 @@ private:
 	void Stop();
 
 	void RunWindowCycle();
+	void UpdateControls();
 
 	RRGrapher() = default;
 	RRGrapher(RRGrapher&) = delete;
