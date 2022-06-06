@@ -63,28 +63,28 @@ void RRGrapher::DrawLayer() const {
 		}
 	};
 
-	// top
-	gameIO.DrawLineSegment(
-		Vector2{ toScreenX(x0), toScreenY(y0) },
-		Vector2{ toScreenX(x1), toScreenY(y0) }, 
-		RRColor::Black());
-	// bot
-	gameIO.DrawLineSegment(
-		Vector2{ toScreenX(x0), toScreenY(y1) },
-		Vector2{ toScreenX(x1), toScreenY(y1) }, 
-		RRColor::Black());
-	// left
-	gameIO.DrawLineSegment(
-		Vector2{ toScreenX(x0), toScreenY(y0) },
-		Vector2{ toScreenX(x0), toScreenY(y1) },
-		RRColor::Black()
-	);
-	// right
-	gameIO.DrawLineSegment(
-		Vector2{ toScreenX(x1), toScreenY(y0) },
-		Vector2{ toScreenX(x1), toScreenY(y1) },
-		RRColor::Black()
-	);
+	//// top
+	//gameIO.DrawLineSegment(
+	//	Vector2{ toScreenX(x0), toScreenY(y0) },
+	//	Vector2{ toScreenX(x1), toScreenY(y0) }, 
+	//	RRColor::Black());
+	//// bot
+	//gameIO.DrawLineSegment(
+	//	Vector2{ toScreenX(x0), toScreenY(y1) },
+	//	Vector2{ toScreenX(x1), toScreenY(y1) }, 
+	//	RRColor::Black());
+	//// left
+	//gameIO.DrawLineSegment(
+	//	Vector2{ toScreenX(x0), toScreenY(y0) },
+	//	Vector2{ toScreenX(x0), toScreenY(y1) },
+	//	RRColor::Black()
+	//);
+	//// right
+	//gameIO.DrawLineSegment(
+	//	Vector2{ toScreenX(x1), toScreenY(y0) },
+	//	Vector2{ toScreenX(x1), toScreenY(y1) },
+	//	RRColor::Black()
+	//);
 
 	//double nBlocksX( size.first / (particleSize * 3) );
 	//double nBlocksY( size.second / (particleSize * 3) );
@@ -111,13 +111,13 @@ void RRGrapher::DrawLayer() const {
 	//auto& [xc, yc] = *iter;
 	//gameIO.DrawCircle(Vector2{ toScreenX(xc), toScreenY(yc) }, particleSize * 3 * scaleCoord, RRColor::Black());
 
-	constexpr RRColor realColor = RRColor::Blue();
-	constexpr RRColor virtualColor = RRColor::Red();
+	constexpr RRColor realColor = RRColor::Black();
+	constexpr RRColor virtualColor = RRColor::Black();
 	 
 	// рисуем круги
 	for (auto& [x, y, type] : layer) {
 		Vector2 pos{ toScreenX(x), toScreenY(y) };
-		gameIO.DrawPoint(pos, type == 2 ? realColor : virtualColor); 
+		gameIO.DrawPoint(pos, type == 2 ? realColor : virtualColor, 1); 
 		//if (x == xc && y == yc) {
 		//	gameIO.DrawCircleFill(pos, 7, RRColor::Black());
 		//}
@@ -161,7 +161,7 @@ void RRGrapher::ComputeStartScale() {
 	int startX{};
 	int startY{};
 	int endX{ gameIO.GetWinWidth() };
-	int endY{ static_cast<int>(gameIO.GetWinHeight() * 0.8) };
+	int endY{ gameIO.GetWinHeight() };
 
 	double areaWidth{ area.second.first };
 	double areaHeight{ area.second.second };
@@ -176,7 +176,7 @@ void RRGrapher::ComputeStartScale() {
 	}
 
 	deltaX = startX - areaX * scaleCoord;
-	deltaY = startY - areaY * scaleCoord;  
+	deltaY = startY - areaY * scaleCoord;
 }
 
 void RRGrapher::Stop() {
@@ -272,7 +272,7 @@ void RRGrapher::RunWindowCycle() {
 				}
 			}
 		} 
-		gameIO.Begin(RRColor::Black());
+		gameIO.Begin(RRColor::White());
 		/* отрисовка всего и вся */  
 		DrawLayer();
 		//timeScroll.Draw();  

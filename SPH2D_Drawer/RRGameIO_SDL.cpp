@@ -29,7 +29,7 @@ void RRGameIO_SDL::Initialize() {
 		windowWidth = static_cast<int>( displayBounds.w * 0.8 );
 	}
 
-	window = SDL_CreateWindow("RRGrapher", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 
+	window = SDL_CreateWindow("SPH2D_Drawer", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 
 		windowWidth, windowHeight, 0);
 	if (!window) { 
 		throw std::runtime_error{ "Failed to create window: " + std::string{ SDL_GetError() } };
@@ -162,12 +162,12 @@ void RRGameIO_SDL::DrawLineSegment(const Vector2& start, const Vector2& end, con
 }
 
 
-void RRGameIO_SDL::DrawPoint(const Vector2& position, const RRColor& color) {
+void RRGameIO_SDL::DrawPoint(const Vector2& position, const RRColor& color, unsigned size) {
 	assert(IsInitialized);
-
+	 
 	SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
-	SDL_RenderDrawLine(renderer, position.X - 2, position.Y, position.X + 2, position.Y);
-	SDL_RenderDrawLine(renderer, position.X, position.Y - 2, position.X, position.Y + 2);
+	SDL_RenderDrawLine(renderer, position.X - size, position.Y, position.X + size, position.Y);
+	SDL_RenderDrawLine(renderer, position.X, position.Y - size, position.X, position.Y + size);
 }
 
 void RRGameIO_SDL::DrawCircleFill(const Vector2& center, double radius, const RRColor& color) {

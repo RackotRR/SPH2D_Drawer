@@ -33,7 +33,7 @@ private:
 	bool shallStop{ false };
 
 	bool autoPlay{ false };
-	unsigned timeToLayer{ 50 };
+	unsigned timeToLayer{ 1 };
 	unsigned passedTime{};
 	  
 	Grid grid;

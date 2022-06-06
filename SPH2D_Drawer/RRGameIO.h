@@ -48,7 +48,7 @@ public:
 	// нарисовать отрезок 
 	virtual void DrawLineSegment(const Vector2& start, const Vector2& end, const RRColor& color) = 0;
 
-	virtual void DrawPoint(const Vector2& position, const RRColor& color) = 0;
+	virtual void DrawPoint(const Vector2& position, const RRColor& color, unsigned size = 0) = 0;
 
 	virtual void DrawCircleFill(const Vector2& center, double radius, const RRColor& color) = 0;
 

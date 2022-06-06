@@ -31,7 +31,7 @@ public:
 	// нарисовать отрезок прямой
 	void DrawLineSegment(const Vector2& start, const Vector2& end, const RRColor& color) override;
 
-	void DrawPoint(const Vector2& position, const RRColor& color) override;
+	void DrawPoint(const Vector2& position, const RRColor& color, unsigned size) override;
 
 	void DrawCircleFill(const Vector2& center, double radius, const RRColor& color) override;
 
