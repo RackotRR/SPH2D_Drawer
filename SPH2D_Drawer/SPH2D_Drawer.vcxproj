@@ -147,7 +147,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Axis.cpp" />
     <ClCompile Include="Rectangle.cpp" />
     <ClCompile Include="RRController.cpp" />
     <ClCompile Include="RRGameIO_SDL.cpp" />
@@ -155,12 +154,10 @@
     <ClCompile Include="RRGrapher.cpp" />
     <ClCompile Include="RRTextOutput.cpp" />
     <ClCompile Include="RRTextureManager.cpp" />
-    <ClCompile Include="ScrollBar.cpp" />
     <ClCompile Include="Source.cpp" />
     <ClCompile Include="Vector2.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Axis.h" />
     <ClInclude Include="Mouse.h" />
     <ClInclude Include="Particle.h" />
     <ClInclude Include="Rectangle.h" />
@@ -174,7 +171,6 @@
     <ClInclude Include="RRTextOutput.h" />
     <ClInclude Include="RRTexture.h" />
     <ClInclude Include="RRTextureManager.h" />
-    <ClInclude Include="ScrollBar.h" />
     <ClInclude Include="TextureType.h" />
     <ClInclude Include="Vector2.h" />
   </ItemGroup>

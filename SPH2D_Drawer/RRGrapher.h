@@ -1,11 +1,9 @@
 #pragma once
 #include <iostream>
-#include <vector> 
+#include <list> 
 #include <array>
 #include <set>
 
-#include "ScrollBar.h"
-#include "Axis.h"
 #include "Particle.h"
 
 using Square = std::pair<std::pair<double, double>, std::pair<double, double>>;

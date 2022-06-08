@@ -1,5 +1,6 @@
 #include <limits>
 #include <algorithm>
+#include <iostream>
 
 #include "RRGrapher.h"
 #include "RRGameIO.h"
@@ -42,15 +43,15 @@ void RRGrapher::Show(Grid gridR, Square area, double particleSize) {
 
 void RRGrapher::DrawLayer() const {
 	auto& layer{ *currentLayer };
-	auto& gameIO{ RRGameIO::Instance() };
-	  
+	auto& gameIO{ RRGameIO::Instance() };	  
+
 	// Нарисовать границы квадрата:
 	const auto& [origin, size] = area;
 	double x0{ origin.first };
 	double x1{ origin.first + size.first };
 	double y0{ origin.second };
 	double y1{ origin.second + size.second };
-	  
+
 	double bottomY{ gameIO.GetWinHeight() * 0.8 };
 
 	auto toScreenX{ 
@@ -64,13 +65,24 @@ void RRGrapher::DrawLayer() const {
 		}
 	};
 
-	constexpr RRColor realColor = RRColor::Black();
+	constexpr RRColor realColor = RRColor::Blue();
 	constexpr RRColor virtualColor = RRColor::Black();
 	 
 	for (auto& [x, y, type] : layer) {
 		Vector2 pos{ toScreenX(x), toScreenY(y) };
-		gameIO.DrawPoint(pos, type == 2 ? realColor : virtualColor, 1); 
+		//gameIO.DrawPoint(pos, type == 2 ? realColor : virtualColor, 1); 
+		gameIO.DrawRectangle(Rectangle{ pos.X, pos.Y, 2, 2 }, type == 2 ? realColor : virtualColor);
 	}
+
+	constexpr double L = 5.2915; 
+	constexpr double pointX = 0.25 * L + 1.02;
+	constexpr double d = 0.7;
+	
+	int verX = toScreenX(pointX);
+	int verY = toScreenY(d);
+	//gameIO.DrawLineSegment({ verX, verY - 50}, { verX, verY + 50 }, RRColor::Green());
+	//gameIO.DrawLineSegment({ 0, verY }, { gameIO.GetWinWidth(), verY}, RRColor::Green());
+
 }
 
 

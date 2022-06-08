@@ -7,6 +7,7 @@
 #include <SDL_image.h>
 #include <stdexcept>
 #include <cmath>
+#include <iostream>
 
 RRGameIO& RRGameIO::Instance() {
 	static RRGameIO_SDL instance;
@@ -162,7 +163,7 @@ void RRGameIO_SDL::DrawLineSegment(const Vector2& start, const Vector2& end, con
 }
 
 
-void RRGameIO_SDL::DrawPoint(const Vector2& position, const RRColor& color, unsigned size) {
+void RRGameIO_SDL::DrawPoint(const Vector2& position, const RRColor& color, int size) {
 	assert(IsInitialized);
 	 
 	SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);

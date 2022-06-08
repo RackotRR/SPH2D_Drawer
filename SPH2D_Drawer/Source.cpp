@@ -9,11 +9,11 @@
 #include "RRGrapher.h"  
 
 auto ReadGridAndParams(std::string_view filePath) {
-	Grid grid;
-	Square square;
+	std::tuple<Grid, Square, double> tuple;
+	auto& [grid, square, dx] = tuple;
 	auto& [origin, size] = square;
 
-	double dx, dy;
+	double dy;
 	size_t ntotal;
 
 	std::ifstream stream{ filePath.data() };
@@ -42,7 +42,7 @@ auto ReadGridAndParams(std::string_view filePath) {
 		grid.push_back(std::move(layer));
 	}
 
-	return std::make_tuple(grid, square, dx);
+	return tuple;
 }
 
 int main(int argc, char* argv[]) {      
