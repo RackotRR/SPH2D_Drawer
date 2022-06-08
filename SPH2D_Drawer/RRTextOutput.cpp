@@ -31,7 +31,7 @@ void RRTextOutput::Shutdown() {
 }
 
 void RRTextOutput::InitFonts() {
-	LoadFont(Font::Treasures, "Fonts\\FreeMono.ttf", 16, RRColor(255, 255, 255), TTF_STYLE_BOLD);
+	LoadFont(Font::Menu, "Fonts\\FreeMono.ttf", 24, RRColor::Black(), TTF_STYLE_BOLD);
 	/*
 	המבאגÿכול חהוסü םמגûו רנטפעû
 	*/ 

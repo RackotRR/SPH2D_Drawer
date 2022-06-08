@@ -12,6 +12,9 @@ RRGrapher& RRGrapher::Instance() {
 	return instance;
 }
 
+void RRGrapher::SetupHeatMap(double min, double max) {
+	heatMap.SetNew(min, max);
+}
 
 void RRGrapher::Show(Grid gridR, Square area, double particleSize) {
 	auto& gameIO{ RRGameIO::Instance() };
@@ -68,10 +71,14 @@ void RRGrapher::DrawLayer() const {
 	constexpr RRColor realColor = RRColor::Blue();
 	constexpr RRColor virtualColor = RRColor::Black();
 	 
-	for (auto& [x, y, type] : layer) {
+	for (auto& [x, y, type, vx, vy, p, rho] : layer) {
 		Vector2 pos{ toScreenX(x), toScreenY(y) };
 		//gameIO.DrawPoint(pos, type == 2 ? realColor : virtualColor, 1); 
-		gameIO.DrawRectangle(Rectangle{ pos.X, pos.Y, 2, 2 }, type == 2 ? realColor : virtualColor);
+		//gameIO.DrawRectangle(Rectangle{ pos.X, pos.Y, 3, 3 }, type == 2 ? realColor : virtualColor);
+		gameIO.DrawRectangle(Rectangle{ pos.X, pos.Y, 
+			1 + int(particleSize * scaleCoord), 
+			1+ int(particleSize * scaleCoord) }, 
+			heatMap.GetNewColorForNum(vx));
 	}
 
 	constexpr double L = 5.2915; 
@@ -83,6 +90,32 @@ void RRGrapher::DrawLayer() const {
 	//gameIO.DrawLineSegment({ verX, verY - 50}, { verX, verY + 50 }, RRColor::Green());
 	//gameIO.DrawLineSegment({ 0, verY }, { gameIO.GetWinWidth(), verY}, RRColor::Green());
 
+}
+
+
+void RRGrapher::DrawLegend() const {
+	auto legend = heatMap.GetLegend();
+
+	auto& gameIO{ RRGameIO::Instance() };
+	auto w = gameIO.GetWinWidth();
+	auto h = gameIO.GetWinHeight();
+
+	int posX = w * 0.8;
+	int posY = h * 0.05;
+	int rectX = w * 0.7;
+	int rectY = h * 0.04;
+	int rectWidth = w * 0.08;
+	int rectHeight = h * 0.05;
+
+	int i = 0;
+	for (auto& [value, color] : legend) {
+		auto dy = posY * i++;
+		auto line = std::to_string(value);
+		int symbols = value < 0 ? 5 : 4;
+		gameIO.DrawLine({ posX, posY + dy }, Font::Menu, std::string(std::begin(line), std::begin(line) + symbols));
+		gameIO.DrawRectangle(Rectangle{ rectX, rectY + dy, rectWidth, rectHeight }, color);
+	}
+	gameIO.DrawLine({ int(w * 0.7), 0 }, Font::Menu, "Velocity");
 }
 
 
@@ -211,6 +244,7 @@ void RRGrapher::RunWindowCycle() {
 		gameIO.Begin(RRColor::White());
 		/* отрисовка всего и вся */  
 		DrawLayer();
+		DrawLegend();
 		gameIO.End();
 	} while (!shallStop);
 }

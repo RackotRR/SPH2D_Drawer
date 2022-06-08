@@ -4,6 +4,10 @@ struct Particle {
 	double x;
 	double y;
 	int itype;
+	double vx;
+	double vy;
+	double p;
+	double rho;
 
 	bool operator<(const Particle& p) const
 	{
