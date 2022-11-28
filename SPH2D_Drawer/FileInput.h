@@ -21,6 +21,7 @@ struct Params {
 	double dt;
 	double simulationTime;
 	int save_step;
+	int maxTimeStep;
 };
 
 Params loadParams(std::string filePath) {
@@ -29,6 +30,7 @@ Params loadParams(std::string filePath) {
 	stream >> json;
 
 	Params params;
+	json.at("experiment_name").get_to(params.experimentName);
 	json.at("x_mingeom").get_to(params.x_origin);
 	json.at("y_mingeom").get_to(params.y_origin);
 	json.at("x_size").get_to(params.x_size);
@@ -38,7 +40,6 @@ Params loadParams(std::string filePath) {
 	json.at("dt").get_to(params.dt);
 	json.at("simulation_time").get_to(params.simulationTime);
 	json.at("save_step").get_to(params.save_step);
-	json.at("experiment_name").get_to(params.experimentName);
 	return params;
 }
 
@@ -47,15 +48,15 @@ void loadLayerFromFile(std::string path, TimeLayer& layer) {
 	std::ifstream stream(path);
 
 	size_t ntotal;
+	stream >> ntotal;
 
-	while (stream >> ntotal) {
-		for (size_t i{}; i < ntotal; i++) {
-			double x, y;
-			int type;
-			stream >> x >> y;
-			stream >> type;
-			layer.emplace(x, y, type);
-		}
+	layer.reserve(ntotal);
+	for (size_t i{}; i < ntotal; i++) {
+		double x, y;
+		int type;
+		stream >> x >> y;
+		stream >> type;
+		layer.emplace_back(x, y, type);
 	}
 
 	std::filesystem::path p = path;
@@ -79,13 +80,14 @@ auto ReadGridAndParams(std::string dirPath) {
 
 	int step = 0;
 	while (true) {
-		auto path = std::filesystem::current_path().append(dirPath + "\\" + std::to_string(step));
+		auto path = std::filesystem::current_path().append(dirPath + "\\data\\" + std::to_string(step));
 		if (std::filesystem::exists(path)) {
 			grid.emplace_back();
 			threads.emplace_back(loadLayerFromFile, path.string(), std::ref(grid.back()));
 			step += params.save_step;
 		}
 		else {
+			params.maxTimeStep = step;
 			break;
 		}
 	}

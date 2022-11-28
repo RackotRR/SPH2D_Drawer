@@ -2,12 +2,13 @@
 #include <iostream>
 #include <list> 
 #include <array>
+#include <vector>
 #include <set>
 
 #include "Particle.h"
 
 using Square = std::pair<std::pair<double, double>, std::pair<double, double>>;
-using TimeLayer = std::multiset<Particle>; 
+using TimeLayer = std::vector<Particle>; 
 using Grid = std::list<TimeLayer>;
 
 class RRGrapher {
