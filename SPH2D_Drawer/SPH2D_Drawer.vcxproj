@@ -72,20 +72,20 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>E:\Projects\LIBS\json;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+    <IncludePath>E:\Projects\LIBS\SDL\SDL2_image-2.0.5\include;E:\Projects\LIBS\SDL\SDL2_ttf-devel-2.0.15-VC\include;E:\Projects\LIBS\SDL\SDL2-2.0.16\include;E:\Projects\LIBS\json;E:\Projects\LIBS\mio\single_include</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>E:\Projects\LIBS\json;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+    <IncludePath>E:\Projects\LIBS\SDL\SDL2_image-2.0.5\include;E:\Projects\LIBS\SDL\SDL2_ttf-devel-2.0.15-VC\include;E:\Projects\LIBS\SDL\SDL2-2.0.16\include;E:\Projects\LIBS\json;E:\Projects\LIBS\mio\single_include</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>E:\Projects\LIBS\json;E:\Projects\LIBS\SDL\SDL2-2.0.16\include;E:\Projects\LIBS\SDL\SDL2_ttf-devel-2.0.15-VC\include;E:\Projects\LIBS\SDL\SDL2_image-2.0.5\include;$(IncludePath)</IncludePath>
+    <IncludePath>E:\Projects\LIBS\SDL\SDL2_image-2.0.5\include;E:\Projects\LIBS\SDL\SDL2_ttf-devel-2.0.15-VC\include;E:\Projects\LIBS\SDL\SDL2-2.0.16\include;E:\Projects\LIBS\json;E:\Projects\LIBS\mio\single_include</IncludePath>
     <LibraryPath>E:\Projects\LIBS\SDL\SDL2-2.0.16\lib\x64;E:\Projects\LIBS\SDL\SDL2_image-2.0.5\lib\x64;E:\Projects\LIBS\SDL\SDL2_ttf-devel-2.0.15-VC\lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>E:\Projects\LIBS\json;E:\Projects\LIBS\SDL\SDL2-2.0.16\include;E:\Projects\LIBS\SDL\SDL2_ttf-devel-2.0.15-VC\include;E:\Projects\LIBS\SDL\SDL2_image-2.0.5\include;$(IncludePath)</IncludePath>
+    <IncludePath>E:\Projects\LIBS\SDL\SDL2_image-2.0.5\include;E:\Projects\LIBS\SDL\SDL2_ttf-devel-2.0.15-VC\include;E:\Projects\LIBS\SDL\SDL2-2.0.16\include;E:\Projects\LIBS\json;E:\Projects\LIBS\mio\single_include</IncludePath>
     <LibraryPath>E:\Projects\LIBS\SDL\SDL2-2.0.16\lib\x64;E:\Projects\LIBS\SDL\SDL2_image-2.0.5\lib\x64;E:\Projects\LIBS\SDL\SDL2_ttf-devel-2.0.15-VC\lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -95,10 +95,12 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <OpenMPSupport>true</OpenMPSupport>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_ttf.lib;SDL2_image.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -110,12 +112,14 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <OpenMPSupport>true</OpenMPSupport>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_ttf.lib;SDL2_image.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -125,11 +129,12 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <OpenMPSupport>true</OpenMPSupport>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_ttf.lib;SDL2_image.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_ttf.lib;SDL2_image.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -141,13 +146,14 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <OpenMPSupport>true</OpenMPSupport>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_ttf.lib;SDL2_image.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_ttf.lib;SDL2_image.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

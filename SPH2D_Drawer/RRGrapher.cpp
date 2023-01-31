@@ -19,14 +19,12 @@ void RRGrapher::Show(Grid gridR, Square area, double particleSize) {
 		gameIO.Initialize();
 
 		this->grid = std::move(gridR);
-		this->maxT = grid.size(); // кол-во временных слоЄв 
-		this->currentT = 0;
-		this->currentLayer = std::begin(grid);
+		this->currentLayer = 0;
 		this->area = area;
 		this->particleSize = particleSize;
 		this->passedTime = 0;
 		// должен быть хот€ бы один временной слой
-		if (maxT == 0) {
+		if (grid.empty()) {
 			throw std::runtime_error("Grid had no time layers!");
 		} 
 		ComputeStartScale();
@@ -42,7 +40,7 @@ void RRGrapher::Show(Grid gridR, Square area, double particleSize) {
 }
 
 void RRGrapher::DrawLayer() const {
-	auto& layer{ *currentLayer };
+	auto& layer{ grid[currentLayer] };
 	auto& gameIO{ RRGameIO::Instance() };	  
 
 	// Ќарисовать границы квадрата:
@@ -55,13 +53,13 @@ void RRGrapher::DrawLayer() const {
 	double bottomY{ gameIO.GetWinHeight() * 0.8 };
 
 	auto toScreenX{ 
-		[=](double x) -> int {
-			return deltaX + x * scaleCoord;
+		[=](double x) {
+			return static_cast<int>(deltaX + x * scaleCoord);
 		}
 	};
 	auto toScreenY{
-		[=](double y) -> int {
-			return bottomY - (deltaY + y * scaleCoord);
+		[=](double y) {
+			return static_cast<int>(bottomY - (deltaY + y * scaleCoord));
 		}
 	};
 
@@ -132,8 +130,7 @@ void RRGrapher::UpdateControls() {
 	}
 	if (keyState.Click(RRKeyboardState::Keys::ENTER)) {
 		autoPlay = true;
-		currentT = 0;
-		currentLayer = std::begin(grid);
+		currentLayer = 0;
 	}
 	if (keyState.Click(RRKeyboardState::Keys::SPACE)) {
 		autoPlay = !autoPlay;
@@ -141,18 +138,16 @@ void RRGrapher::UpdateControls() {
 	if (keyState.Click(RRKeyboardState::Keys::D) || keyState.IsKeyDown(RRKeyboardState::Keys::W)) {
 		auto next = currentLayer;
 		next++;
-		if (next != std::end(grid)) {
-			currentT++;
+		if (next != grid.size()) {
 			currentLayer++;
 		}
-		std::cout << "currentT: " << currentT << " / " << maxT << std::endl;
+		std::cout << "currentLayer: " << currentLayer << " / " << grid.size() << std::endl;
 	}
 	if (keyState.Click(RRKeyboardState::Keys::A) || keyState.IsKeyDown(RRKeyboardState::Keys::S)) {
-		if (currentLayer != std::begin(grid)) {
-			currentT--;
+		if (currentLayer != 0) {
 			currentLayer--;
 		}
-		std::cout << "currentT: " << currentT << " / " << maxT << std::endl;
+		std::cout << "currentT: " << currentLayer << " / " << grid.size() << std::endl;
 	}
 	if (keyState.IsKeyDown(RRKeyboardState::Keys::Z)) {
 		timeToLayer -= 2;
@@ -199,11 +194,9 @@ void RRGrapher::RunWindowCycle() {
 			passedTime += gameTime.GetPassedTime();
 			if (passedTime > timeToLayer) {
 				passedTime = 0;
-				currentT++;
 				currentLayer++;
-				if (currentT >= maxT) {
-					currentT = 0;
-					currentLayer = std::begin(grid);
+				if (currentLayer == grid.size()) {
+					currentLayer = grid.size() - 1;
 					autoPlay = false;
 				}
 			}

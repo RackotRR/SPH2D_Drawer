@@ -6,7 +6,7 @@
 #include <filesystem>
 #include <iostream>
 #include <nlohmann/json.hpp>
-
+#include <mio/mio.hpp>
 #include "RRGrapher.h"
 
 
@@ -22,7 +22,10 @@ struct Params {
 	double simulationTime;
 	int save_step;
 	int maxTimeStep;
+	double depth;
+	double wave_length;
 };
+
 
 Params loadParams(std::string filePath) {
 	nlohmann::json json;
@@ -40,17 +43,47 @@ Params loadParams(std::string filePath) {
 	json.at("dt").get_to(params.dt);
 	json.at("simulation_time").get_to(params.simulationTime);
 	json.at("save_step").get_to(params.save_step);
+	json.at("depth").get_to(params.depth);
+	json.at("wave_length").get_to(params.wave_length);
 	return params;
 }
 
+void loadLayerFromFileMM(std::string path, TimeLayer& layer) {
+	std::error_code error;
+	auto mmap = mio::make_mmap_source(path.c_str(), error);
+	if (error) {
+		std::cout << "error mapping file " << error.message() << ", exit" << std::endl;
+		return;
+	}
+
+	auto begin = std::begin(mmap);
+	char* iter;
+
+	size_t ntotal = std::strtoull(begin, &iter, 10);
+	layer.reserve(ntotal);
+
+	double x, y;
+	long type;
+	for (; iter != std::end(mmap) && layer.size() < ntotal;) {
+		x = std::strtod(iter, &iter);
+		y = std::strtod(iter, &iter);
+		type = std::strtol(iter, &iter, 10);
+		layer.emplace_back(x, y, type);
+	}
+
+	std::filesystem::path p = path;
+	std::string output = "layer " + p.filename().string() + "\n";
+	std::cout << output;
+}
+
 void loadLayerFromFile(std::string path, TimeLayer& layer) {
-	int layerCounter{};
 	std::ifstream stream(path);
 
 	size_t ntotal;
 	stream >> ntotal;
 
 	layer.reserve(ntotal);
+
 	for (size_t i{}; i < ntotal; i++) {
 		double x, y;
 		int type;
@@ -76,14 +109,13 @@ auto ReadGridAndParams(std::string dirPath) {
 	size.first = params.x_size;
 	size.second = params.y_size;
 
-	std::vector<std::jthread> threads;
+	std::vector<std::string> meta;
 
 	int step = 0;
 	while (true) {
 		auto path = std::filesystem::current_path().append(dirPath + "\\data\\" + std::to_string(step));
 		if (std::filesystem::exists(path)) {
-			grid.emplace_back();
-			threads.emplace_back(loadLayerFromFile, path.string(), std::ref(grid.back()));
+			meta.emplace_back(path.string());
 			step += params.save_step;
 		}
 		else {
@@ -92,5 +124,14 @@ auto ReadGridAndParams(std::string dirPath) {
 		}
 	}
 
+	grid = std::vector<TimeLayer>(meta.size());
+
+#pragma omp parallel for
+	for (int i = 0; i < meta.size(); ++i) {
+		auto& path = meta[i];
+		loadLayerFromFileMM(path, grid[i]);
+	}
+
+	std::cout << "finish loading" << std::endl;
 	return tuple;
 }
