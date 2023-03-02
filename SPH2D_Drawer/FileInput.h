@@ -62,12 +62,18 @@ void loadLayerFromFileMM(std::string path, TimeLayer& layer) {
 	size_t ntotal = std::strtoull(begin, &iter, 10);
 	layer.reserve(ntotal);
 
+	double press;
+	double v_x, v_y;
+
 	double x, y;
 	long type;
 	for (; iter != std::end(mmap) && layer.size() < ntotal;) {
 		x = std::strtod(iter, &iter);
 		y = std::strtod(iter, &iter);
 		type = std::strtol(iter, &iter, 10);
+		v_x = std::strtod(iter, &iter);
+		v_y = std::strtod(iter, &iter);
+		press = std::strtod(iter, &iter);
 		layer.emplace_back(x, y, type);
 	}
 
