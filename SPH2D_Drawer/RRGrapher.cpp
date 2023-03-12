@@ -22,14 +22,12 @@ void RRGrapher::Show(Grid gridR, Square area, double particleSize) {
 		gameIO.Initialize();
 
 		this->grid = std::move(gridR);
-		this->maxT = grid.size(); // кол-во временных слоёв 
-		this->currentT = 0;
-		this->currentLayer = std::begin(grid);
+		this->currentLayer = 0;
 		this->area = area;
 		this->particleSize = particleSize;
 		this->passedTime = 0;
 		// должен быть хотя бы один временной слой
-		if (maxT == 0) {
+		if (grid.empty()) {
 			throw std::runtime_error("Grid had no time layers!");
 		} 
 		ComputeStartScale();
@@ -45,7 +43,7 @@ void RRGrapher::Show(Grid gridR, Square area, double particleSize) {
 }
 
 void RRGrapher::DrawLayer() const {
-	auto& layer{ *currentLayer };
+	auto& layer{ grid[currentLayer] };
 	auto& gameIO{ RRGameIO::Instance() };	  
 
 	// Нарисовать границы квадрата:
@@ -71,14 +69,14 @@ void RRGrapher::DrawLayer() const {
 	constexpr RRColor realColor = RRColor::Blue();
 	constexpr RRColor virtualColor = RRColor::Black();
 	 
-	for (auto& [x, y, type, vx, vy, p, rho] : layer) {
+	for (auto& [x, y, type, vx, vy, p, rho, u] : layer) {
 		Vector2 pos{ toScreenX(x), toScreenY(y) };
 		//gameIO.DrawPoint(pos, type == 2 ? realColor : virtualColor, 1); 
 		//gameIO.DrawRectangle(Rectangle{ pos.X, pos.Y, 3, 3 }, type == 2 ? realColor : virtualColor);
 		gameIO.DrawRectangle(Rectangle{ pos.X, pos.Y, 
 			1 + int(particleSize * scaleCoord), 
 			1+ int(particleSize * scaleCoord) }, 
-			heatMap.GetNewColorForNum(vx));
+			heatMap.GetNewColorForNum(p));
 	}
 
 	constexpr double L = 5.2915; 
@@ -115,7 +113,7 @@ void RRGrapher::DrawLegend() const {
 		gameIO.DrawLine({ posX, posY + dy }, Font::Menu, std::string(std::begin(line), std::begin(line) + symbols));
 		gameIO.DrawRectangle(Rectangle{ rectX, rectY + dy, rectWidth, rectHeight }, color);
 	}
-	gameIO.DrawLine({ int(w * 0.7), 0 }, Font::Menu, "Velocity");
+	gameIO.DrawLine({ int(w * 0.7), 0 }, Font::Menu, "p");
 }
 
 
@@ -165,27 +163,22 @@ void RRGrapher::UpdateControls() {
 	}
 	if (keyState.Click(RRKeyboardState::Keys::ENTER)) {
 		autoPlay = true;
-		currentT = 0;
-		currentLayer = std::begin(grid);
+		currentLayer = 0;
 	}
 	if (keyState.Click(RRKeyboardState::Keys::SPACE)) {
 		autoPlay = !autoPlay;
 	}
 	if (keyState.Click(RRKeyboardState::Keys::D) || keyState.IsKeyDown(RRKeyboardState::Keys::W)) {
-		auto next = currentLayer;
-		next++;
-		if (next != std::end(grid)) {
-			currentT++;
+		if (currentLayer < grid.size() - 1) {
 			currentLayer++;
 		}
-		std::cout << "currentT: " << currentT << " / " << maxT << std::endl;
+		std::cout << "currentT: " << currentLayer << " / " << grid.size() << std::endl;
 	}
 	if (keyState.Click(RRKeyboardState::Keys::A) || keyState.IsKeyDown(RRKeyboardState::Keys::S)) {
-		if (currentLayer != std::begin(grid)) {
-			currentT--;
+		if (currentLayer > 0) {
 			currentLayer--;
 		}
-		std::cout << "currentT: " << currentT << " / " << maxT << std::endl;
+		std::cout << "currentT: " << currentLayer << " / " << grid.size() << std::endl;
 	}
 	if (keyState.IsKeyDown(RRKeyboardState::Keys::Z)) {
 		timeToLayer -= 2;
@@ -227,22 +220,20 @@ void RRGrapher::RunWindowCycle() {
 		 
 		UpdateControls();
 		
-
 		if (autoPlay) {
 			passedTime += gameTime.GetPassedTime();
 			if (passedTime > timeToLayer) {
 				passedTime = 0;
-				currentT++;
-				currentLayer++;
-				if (currentT >= maxT) {
-					currentT = 0;
-					currentLayer = std::begin(grid);
+				if (currentLayer < grid.size() - 1) {
+					currentLayer++;
+				}
+				else {
 					autoPlay = false;
 				}
 			}
 		} 
+
 		gameIO.Begin(RRColor::White());
-		/* отрисовка всего и вся */  
 		DrawLayer();
 		DrawLegend();
 		gameIO.End();

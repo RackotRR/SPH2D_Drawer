@@ -8,6 +8,7 @@ struct Particle {
 	double vy;
 	double p;
 	double rho;
+	double u;
 
 	bool operator<(const Particle& p) const
 	{

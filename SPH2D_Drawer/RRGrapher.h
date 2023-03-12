@@ -2,14 +2,14 @@
 #include <iostream>
 #include <list> 
 #include <array>
-#include <set>
+#include <vector>
 
 #include "Particle.h"
 #include "HeatMap2.h"
 
 using Square = std::pair<std::pair<double, double>, std::pair<double, double>>;
-using TimeLayer = std::multiset<Particle>; 
-using Grid = std::list<TimeLayer>;
+using TimeLayer = std::vector<Particle>; 
+using Grid = std::vector<TimeLayer>;
 
 class RRGrapher {
 public:
@@ -46,7 +46,5 @@ private:
 	double deltaX{};
 	double deltaY{};
 
-	std::list<TimeLayer>::iterator currentLayer;
-	size_t currentT{};
-	size_t maxT{};
+	size_t currentLayer{};
 };
