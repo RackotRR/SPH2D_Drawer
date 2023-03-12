@@ -1,6 +1,7 @@
 #pragma once
 #include <iostream>
-#include <list> 
+#include <unordered_map> 
+#include <functional>
 #include <array>
 #include <vector>
 
@@ -20,12 +21,16 @@ public:
 private:
 	void DrawLayer() const;
 	void DrawLegend() const;
+	void UpdateDraw() const;
 
 	void ComputeStartScale();
 	void Stop();
 
 	void RunWindowCycle();
 	void UpdateControls();
+
+	void UpdateConsoleInput();
+	void InitConsoleCommands();
 
 	RRGrapher() = default;
 	RRGrapher(RRGrapher&) = delete;
@@ -43,8 +48,12 @@ private:
 
 	double particleSize{};
 	double scaleCoord{ 1 }; 
+
+	double spaceSpeed{ 3 };
 	double deltaX{};
 	double deltaY{};
 
 	size_t currentLayer{};
+
+	std::unordered_map<std::string, std::function<void()>> commands;
 };

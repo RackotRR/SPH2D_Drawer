@@ -20,6 +20,7 @@ void RRGrapher::Show(Grid gridR, Square area, double particleSize) {
 	auto& gameIO{ RRGameIO::Instance() };
 	try { 
 		gameIO.Initialize();
+		InitConsoleCommands();
 
 		this->grid = std::move(gridR);
 		this->currentLayer = 0;
@@ -161,13 +162,18 @@ void RRGrapher::UpdateControls() {
 	if (keyState.Click(RRKeyboardState::Keys::E)) {
 		scaleCoord *= 0.9;
 	}
+
 	if (keyState.Click(RRKeyboardState::Keys::ENTER)) {
-		autoPlay = true;
+		autoPlay = false;
 		currentLayer = 0;
 	}
 	if (keyState.Click(RRKeyboardState::Keys::SPACE)) {
 		autoPlay = !autoPlay;
+		if (currentLayer == grid.size() - 1) {
+			currentLayer = 0;
+		}
 	}
+
 	if (keyState.Click(RRKeyboardState::Keys::D) || keyState.IsKeyDown(RRKeyboardState::Keys::W)) {
 		if (currentLayer < grid.size() - 1) {
 			currentLayer++;
@@ -180,9 +186,10 @@ void RRGrapher::UpdateControls() {
 		}
 		std::cout << "currentT: " << currentLayer << " / " << grid.size() << std::endl;
 	}
+
 	if (keyState.IsKeyDown(RRKeyboardState::Keys::Z)) {
 		timeToLayer -= 2;
-		if (timeToLayer < 2) timeToLayer = 2;
+		if (timeToLayer < 2) timeToLayer = 1;
 		std::cout << "timeToLayer: " << timeToLayer << std::endl;
 	}
 	if (keyState.IsKeyDown(RRKeyboardState::Keys::X)) {
@@ -190,19 +197,78 @@ void RRGrapher::UpdateControls() {
 		std::cout << "timeToLayer: " << timeToLayer << std::endl;
 	}
 
-	double speed = 3;
 	if (keyState.IsKeyDown(RRKeyboardState::Keys::I)) {
-		deltaY -= speed;
+		deltaY -= spaceSpeed;
 	}
 	if (keyState.IsKeyDown(RRKeyboardState::Keys::K)) {
-		deltaY += speed;
+		deltaY += spaceSpeed;
 	}
 	if (keyState.IsKeyDown(RRKeyboardState::Keys::J)) {
-		deltaX += speed;
+		deltaX += spaceSpeed;
 	}
 	if (keyState.IsKeyDown(RRKeyboardState::Keys::L)) {
-		deltaX -= speed;
+		deltaX -= spaceSpeed;
 	}
+
+	if (keyState.Click(RRKeyboardState::Keys::F1)) {
+		UpdateConsoleInput();
+	}
+}
+
+void RRGrapher::UpdateConsoleInput() {
+	std::string command;
+	std::cout << "print \"exit\" to finish console input" << std::endl;
+	autoPlay = false;
+
+	while (std::cout << ">> ",
+		std::cin >> command,
+		command != "exit")
+	{
+		if (commands.contains(command)) {
+			auto& response = commands[command];
+			response();
+			UpdateDraw();
+		}
+		else {
+			std::cout << "unqnown command" << std::endl;
+		}
+	}
+}
+void RRGrapher::InitConsoleCommands() {
+	commands.emplace("set", [&] {
+		std::string var_name;
+		std::cin >> var_name;
+
+		if (var_name == "help") {
+#define POSSIBLE_VARIABLE_TO_SET(variable) std::cout << typeid(variable).name() << " " << #variable << " = " << variable << std::endl
+			std::cout << "possible variables to set:" << std::endl;
+			POSSIBLE_VARIABLE_TO_SET(timeToLayer);
+			POSSIBLE_VARIABLE_TO_SET(scaleCoord);
+			POSSIBLE_VARIABLE_TO_SET(spaceSpeed);
+			POSSIBLE_VARIABLE_TO_SET(deltaX);
+			POSSIBLE_VARIABLE_TO_SET(deltaY);
+			POSSIBLE_VARIABLE_TO_SET(particleSize);
+			POSSIBLE_VARIABLE_TO_SET(currentLayer);
+#undef POSSIBLE_VARIABLE_TO_SET
+		}
+
+#define COMMAND_SET_VARIABLE(variable) if (var_name == #variable) { std::cin >> variable; return; }
+		COMMAND_SET_VARIABLE(timeToLayer);
+		COMMAND_SET_VARIABLE(scaleCoord);
+		COMMAND_SET_VARIABLE(spaceSpeed);
+		COMMAND_SET_VARIABLE(deltaX);
+		COMMAND_SET_VARIABLE(deltaY);
+		COMMAND_SET_VARIABLE(particleSize);
+		COMMAND_SET_VARIABLE(currentLayer);
+#undef COMMAND_SET_VARIABLE
+	});
+
+	commands.emplace("help", [&] {
+		std::cout << "commands: " << std::endl;
+		for (auto& [command, func] : commands) {
+			std::cout << command << std::endl;
+		}
+	});
 }
 
 void RRGrapher::RunWindowCycle() { 
@@ -233,9 +299,13 @@ void RRGrapher::RunWindowCycle() {
 			}
 		} 
 
-		gameIO.Begin(RRColor::White());
-		DrawLayer();
-		DrawLegend();
-		gameIO.End();
+		UpdateDraw();
 	} while (!shallStop);
+}
+void RRGrapher::UpdateDraw() const {
+	auto& gameIO{ RRGameIO::Instance() };
+	gameIO.Begin(RRColor::White());
+	DrawLayer();
+	DrawLegend();
+	gameIO.End();
 }

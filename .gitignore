@@ -5,6 +5,7 @@
 
 bparams
 params
+SPH2D_Drawer/tmp/
 
 # User-specific files
 *.rsuser

@@ -55,6 +55,19 @@ public:
         BACKSPACE = 42,
         TAB = 43,
         SPACE = 44,
+
+        F1 = 58,
+        F2 = 59,
+        F3 = 60,
+        F4 = 61,
+        F5 = 62,
+        F6 = 63,
+        F7 = 64,
+        F8 = 65,
+        F9 = 66,
+        F10 = 67,
+        F11 = 68,
+        F12 = 69
     };
       
     bool IsKeyDown(Keys key) const {
@@ -77,13 +90,13 @@ public:
 
     void Update(const unsigned char* keys) {
         // каждый раз копируем два массива - для текущего состояния и для предыдущего 
+        std::swap(this->keys, this->oldKeys);
         for (unsigned char i{}; i < MaxArraySize; i++) { 
-            oldKeys[i] = this->keys[i];
             this->keys[i] = keys[i];
         }
     }
 private:
-    static constexpr int MaxArraySize{ 45 };
+    static constexpr int MaxArraySize{ 70 };
     std::array<unsigned char, MaxArraySize> keys, oldKeys; 
 };
 
