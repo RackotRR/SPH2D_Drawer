@@ -121,6 +121,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <OpenMPSupport>true</OpenMPSupport>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -148,11 +149,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="HeatMap.cpp" />
     <ClCompile Include="Rectangle.cpp" />
     <ClCompile Include="RRController.cpp" />
     <ClCompile Include="RRGameIO_SDL.cpp" />
     <ClCompile Include="RRGameTime.cpp" />
     <ClCompile Include="RRGrapher.cpp" />
+    <ClCompile Include="RRGrapherInput.cpp" />
     <ClCompile Include="RRTextOutput.cpp" />
     <ClCompile Include="RRTextureManager.cpp" />
     <ClCompile Include="Source.cpp" />

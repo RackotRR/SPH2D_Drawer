@@ -17,7 +17,7 @@ public:
 	static RRGrapher& Instance();
 
 	void Show(Grid grid, Square area, double particleSize);
-	void SetupHeatMap(double min, double max);
+	void SetupHeatMap(double min, double max, std::string variableName);
 private:
 	void DrawLayer() const;
 	void DrawLegend() const;
@@ -28,9 +28,11 @@ private:
 
 	void RunWindowCycle();
 	void UpdateControls();
+	void UpdateAutoPlay();
 
 	void UpdateConsoleInput();
 	void InitConsoleCommands();
+	void DefaultSetup();
 
 	RRGrapher() = default;
 	RRGrapher(RRGrapher&) = delete;
@@ -39,6 +41,8 @@ private:
 	bool shallStop{ false };
 
 	bool autoPlay{ false };
+
+	static constexpr unsigned DEFAULT_TIME_TO_LAYER = 1;
 	unsigned timeToLayer{ 1 };
 	unsigned passedTime{};
 	  
@@ -47,9 +51,12 @@ private:
 	HeatMap heatMap;
 
 	double particleSize{};
-	double scaleCoord{ 1 }; 
 
-	double spaceSpeed{ 3 };
+	static constexpr double DEFAULT_SCALE_COORD = 1;
+	double scaleCoord{ DEFAULT_SCALE_COORD };
+
+	static constexpr double DEFAULT_SPACE_SPEED = 3;
+	double spaceSpeed{ DEFAULT_SPACE_SPEED };
 	double deltaX{};
 	double deltaY{};
 

@@ -1,7 +1,6 @@
 #pragma once
-/*
-Абстракция цвета
-*/
+#include <cmath>
+
 struct RRColor {
 	constexpr RRColor() : RRColor{ 0, 0, 0, 255 } {}
 	constexpr RRColor(unsigned char r, unsigned char g, unsigned char b) : RRColor{ r, g, b, 255 } {}

@@ -26,7 +26,7 @@ struct Params {
 };
 
 
-Params loadParams(std::string filePath) {
+inline Params loadParams(std::string filePath) {
 	nlohmann::json json;
 	std::ifstream stream{ filePath };
 	stream >> json;
@@ -48,6 +48,8 @@ Params loadParams(std::string filePath) {
 }
 
 namespace SPHFIO {
+	inline std::string EXPERIMENT_DIRECTORY;
+
 	constexpr char VX_NAME[] = " vx ";
 	constexpr char VY_NAME[] = " vy ";
 	constexpr char P_NAME[] = " p ";
@@ -136,6 +138,8 @@ namespace SPHFIO {
 }
 
 inline auto ReadGridAndParams(std::string dirPath) {
+	SPHFIO::EXPERIMENT_DIRECTORY = dirPath;
+
 	std::tuple<Grid, Square, double> tuple;
 	auto& [grid, square, dx] = tuple;
 	auto& [origin, size] = square;

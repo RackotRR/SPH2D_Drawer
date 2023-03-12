@@ -12,8 +12,8 @@ RRGrapher& RRGrapher::Instance() {
 	return instance;
 }
 
-void RRGrapher::SetupHeatMap(double min, double max) {
-	heatMap.SetNew(min, max);
+void RRGrapher::SetupHeatMap(double min, double max, std::string variableName) {
+	heatMap.SetNew(min, max, variableName);
 }
 
 void RRGrapher::Show(Grid gridR, Square area, double particleSize) {
@@ -21,16 +21,17 @@ void RRGrapher::Show(Grid gridR, Square area, double particleSize) {
 	try { 
 		gameIO.Initialize();
 		InitConsoleCommands();
+		DefaultSetup();
 
 		this->grid = std::move(gridR);
-		this->currentLayer = 0;
 		this->area = area;
 		this->particleSize = particleSize;
 		this->passedTime = 0;
-		// должен быть хотя бы один временной слой
+
 		if (grid.empty()) {
 			throw std::runtime_error("Grid had no time layers!");
 		} 
+
 		ComputeStartScale();
 
 		RunWindowCycle();
@@ -46,6 +47,15 @@ void RRGrapher::Show(Grid gridR, Square area, double particleSize) {
 void RRGrapher::DrawLayer() const {
 	auto& layer{ grid[currentLayer] };
 	auto& gameIO{ RRGameIO::Instance() };	  
+
+#define GET_VARIABLE_BY_NAME(variable) { #variable, [](const Particle& part) { return part.variable; } }
+	static std::unordered_map<std::string, std::function<double(const Particle& part)>> getValueFunctions{
+		GET_VARIABLE_BY_NAME(vx),
+		GET_VARIABLE_BY_NAME(vy),
+		GET_VARIABLE_BY_NAME(p),
+		GET_VARIABLE_BY_NAME(rho),
+		GET_VARIABLE_BY_NAME(u)
+	};
 
 	// Нарисовать границы квадрата:
 	const auto& [origin, size] = area;
@@ -70,30 +80,31 @@ void RRGrapher::DrawLayer() const {
 	constexpr RRColor realColor = RRColor::Blue();
 	constexpr RRColor virtualColor = RRColor::Black();
 	 
-	for (auto& [x, y, type, vx, vy, p, rho, u] : layer) {
-		Vector2 pos{ toScreenX(x), toScreenY(y) };
-		//gameIO.DrawPoint(pos, type == 2 ? realColor : virtualColor, 1); 
-		//gameIO.DrawRectangle(Rectangle{ pos.X, pos.Y, 3, 3 }, type == 2 ? realColor : virtualColor);
-		gameIO.DrawRectangle(Rectangle{ pos.X, pos.Y, 
-			1 + int(particleSize * scaleCoord), 
-			1+ int(particleSize * scaleCoord) }, 
-			heatMap.GetNewColorForNum(p));
+	for (auto& particle : layer) {
+		Vector2 pos{ toScreenX(particle.x), toScreenY(particle.y) };
+
+		auto& variableName = heatMap.GetVariableName();
+		if (getValueFunctions.contains(variableName)) {
+			auto getValueFunction = getValueFunctions[variableName];
+			auto value = getValueFunction(particle);
+			gameIO.DrawRectangle(Rectangle{ pos.X, pos.Y,
+				1 + int(particleSize * scaleCoord),
+				1 + int(particleSize * scaleCoord) },
+				heatMap.GetNewColorForNum(value));
+		}
+		else {
+			gameIO.DrawRectangle(Rectangle{ pos.X, pos.Y, 
+				1 + int(particleSize * scaleCoord), 
+				1 + int(particleSize * scaleCoord) },
+				particle.itype == 2 ? realColor : virtualColor);
+		}
 	}
-
-	constexpr double L = 5.2915; 
-	constexpr double pointX = 0.25 * L + 1.02;
-	constexpr double d = 0.7;
-	
-	int verX = toScreenX(pointX);
-	int verY = toScreenY(d);
-	//gameIO.DrawLineSegment({ verX, verY - 50}, { verX, verY + 50 }, RRColor::Green());
-	//gameIO.DrawLineSegment({ 0, verY }, { gameIO.GetWinWidth(), verY}, RRColor::Green());
-
 }
 
 
 void RRGrapher::DrawLegend() const {
 	auto legend = heatMap.GetLegend();
+	if (legend.size() == 1) return;
 
 	auto& gameIO{ RRGameIO::Instance() };
 	auto w = gameIO.GetWinWidth();
@@ -114,7 +125,7 @@ void RRGrapher::DrawLegend() const {
 		gameIO.DrawLine({ posX, posY + dy }, Font::Menu, std::string(std::begin(line), std::begin(line) + symbols));
 		gameIO.DrawRectangle(Rectangle{ rectX, rectY + dy, rectWidth, rectHeight }, color);
 	}
-	gameIO.DrawLine({ int(w * 0.7), 0 }, Font::Menu, "p");
+	gameIO.DrawLine({ int(w * 0.7), 0 }, Font::Menu, heatMap.GetVariableName());
 }
 
 
@@ -129,9 +140,9 @@ void RRGrapher::ComputeStartScale() {
 	double areaHeight{ area.second.second };
 	double areaX{ area.first.first };
 	double areaY{ area.first.second };
+
 	if (gameIO.GetWinWidth() <= gameIO.GetWinHeight()) {
-		scaleCoord = endY / areaHeight;
-		
+		scaleCoord = endY / areaHeight;		
 	}
 	else {
 		scaleCoord = endX / areaWidth;
@@ -145,130 +156,15 @@ void RRGrapher::Stop() {
 	shallStop = true;
 }
 
-void RRGrapher::UpdateControls() {
-	auto& controller{ RRController::Instance() };
-
-	auto& mouseState{ controller.GetMouseState() };
-	if (mouseState.RightButton == Mouse::State::Pressed) {
-		Vector2 deltaPos{ mouseState.Position - mouseState.PrevPosition };
-		deltaX += deltaPos.X;
-		deltaY -= deltaPos.Y;
-	}
-
-	auto& keyState{ controller.GetKeyState() };
-	if (keyState.Click(RRKeyboardState::Keys::Q)) {
-		scaleCoord *= 1.1;
-	}
-	if (keyState.Click(RRKeyboardState::Keys::E)) {
-		scaleCoord *= 0.9;
-	}
-
-	if (keyState.Click(RRKeyboardState::Keys::ENTER)) {
-		autoPlay = false;
-		currentLayer = 0;
-	}
-	if (keyState.Click(RRKeyboardState::Keys::SPACE)) {
-		autoPlay = !autoPlay;
-		if (currentLayer == grid.size() - 1) {
-			currentLayer = 0;
-		}
-	}
-
-	if (keyState.Click(RRKeyboardState::Keys::D) || keyState.IsKeyDown(RRKeyboardState::Keys::W)) {
-		if (currentLayer < grid.size() - 1) {
-			currentLayer++;
-		}
-		std::cout << "currentT: " << currentLayer << " / " << grid.size() << std::endl;
-	}
-	if (keyState.Click(RRKeyboardState::Keys::A) || keyState.IsKeyDown(RRKeyboardState::Keys::S)) {
-		if (currentLayer > 0) {
-			currentLayer--;
-		}
-		std::cout << "currentT: " << currentLayer << " / " << grid.size() << std::endl;
-	}
-
-	if (keyState.IsKeyDown(RRKeyboardState::Keys::Z)) {
-		timeToLayer -= 2;
-		if (timeToLayer < 2) timeToLayer = 1;
-		std::cout << "timeToLayer: " << timeToLayer << std::endl;
-	}
-	if (keyState.IsKeyDown(RRKeyboardState::Keys::X)) {
-		timeToLayer += 2;
-		std::cout << "timeToLayer: " << timeToLayer << std::endl;
-	}
-
-	if (keyState.IsKeyDown(RRKeyboardState::Keys::I)) {
-		deltaY -= spaceSpeed;
-	}
-	if (keyState.IsKeyDown(RRKeyboardState::Keys::K)) {
-		deltaY += spaceSpeed;
-	}
-	if (keyState.IsKeyDown(RRKeyboardState::Keys::J)) {
-		deltaX += spaceSpeed;
-	}
-	if (keyState.IsKeyDown(RRKeyboardState::Keys::L)) {
-		deltaX -= spaceSpeed;
-	}
-
-	if (keyState.Click(RRKeyboardState::Keys::F1)) {
-		UpdateConsoleInput();
-	}
-}
-
-void RRGrapher::UpdateConsoleInput() {
-	std::string command;
-	std::cout << "print \"exit\" to finish console input" << std::endl;
+void RRGrapher::DefaultSetup() {
+	currentLayer = 0;
+	deltaX = 0;
+	deltaY = 0;
+	spaceSpeed = DEFAULT_SPACE_SPEED;
+	scaleCoord = DEFAULT_SCALE_COORD;
+	particleSize = 0;
+	timeToLayer = DEFAULT_TIME_TO_LAYER;
 	autoPlay = false;
-
-	while (std::cout << ">> ",
-		std::cin >> command,
-		command != "exit")
-	{
-		if (commands.contains(command)) {
-			auto& response = commands[command];
-			response();
-			UpdateDraw();
-		}
-		else {
-			std::cout << "unqnown command" << std::endl;
-		}
-	}
-}
-void RRGrapher::InitConsoleCommands() {
-	commands.emplace("set", [&] {
-		std::string var_name;
-		std::cin >> var_name;
-
-		if (var_name == "help") {
-#define POSSIBLE_VARIABLE_TO_SET(variable) std::cout << typeid(variable).name() << " " << #variable << " = " << variable << std::endl
-			std::cout << "possible variables to set:" << std::endl;
-			POSSIBLE_VARIABLE_TO_SET(timeToLayer);
-			POSSIBLE_VARIABLE_TO_SET(scaleCoord);
-			POSSIBLE_VARIABLE_TO_SET(spaceSpeed);
-			POSSIBLE_VARIABLE_TO_SET(deltaX);
-			POSSIBLE_VARIABLE_TO_SET(deltaY);
-			POSSIBLE_VARIABLE_TO_SET(particleSize);
-			POSSIBLE_VARIABLE_TO_SET(currentLayer);
-#undef POSSIBLE_VARIABLE_TO_SET
-		}
-
-#define COMMAND_SET_VARIABLE(variable) if (var_name == #variable) { std::cin >> variable; return; }
-		COMMAND_SET_VARIABLE(timeToLayer);
-		COMMAND_SET_VARIABLE(scaleCoord);
-		COMMAND_SET_VARIABLE(spaceSpeed);
-		COMMAND_SET_VARIABLE(deltaX);
-		COMMAND_SET_VARIABLE(deltaY);
-		COMMAND_SET_VARIABLE(particleSize);
-		COMMAND_SET_VARIABLE(currentLayer);
-#undef COMMAND_SET_VARIABLE
-	});
-
-	commands.emplace("help", [&] {
-		std::cout << "commands: " << std::endl;
-		for (auto& [command, func] : commands) {
-			std::cout << command << std::endl;
-		}
-	});
 }
 
 void RRGrapher::RunWindowCycle() { 
@@ -279,29 +175,32 @@ void RRGrapher::RunWindowCycle() {
 	do {
 		controller.Update();
 		gameTime.Update();
-		/* обработка игровой логики */ 
+
 		if (controller.HasQuitEvent()) {
 			Stop();
 		}
 		 
 		UpdateControls();
-		
-		if (autoPlay) {
-			passedTime += gameTime.GetPassedTime();
-			if (passedTime > timeToLayer) {
-				passedTime = 0;
-				if (currentLayer < grid.size() - 1) {
-					currentLayer++;
-				}
-				else {
-					autoPlay = false;
-				}
-			}
-		} 
-
+		UpdateAutoPlay();
 		UpdateDraw();
 	} while (!shallStop);
 }
+
+void RRGrapher::UpdateAutoPlay() {
+	if (autoPlay) {
+		passedTime += RRGameTime::Instance().GetPassedTime();
+		if (passedTime > timeToLayer) {
+			passedTime = 0;
+			if (currentLayer < grid.size() - 1) {
+				currentLayer++;
+			}
+			else {
+				autoPlay = false;
+			}
+		}
+	}
+}
+
 void RRGrapher::UpdateDraw() const {
 	auto& gameIO{ RRGameIO::Instance() };
 	gameIO.Begin(RRColor::White());
