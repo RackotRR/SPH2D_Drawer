@@ -131,20 +131,12 @@ namespace SPHFIO {
 		size_t ntotal = std::strtoull(begin, &iter, 10);
 		layer.reserve(ntotal);
 
-	double press;
-	double v_x, v_y;
-
 		double x, y;
 		long type;
 		for (; iter != std::end(mmap) && layer.size() < ntotal;) {
 			x = std::strtod(iter, &iter);
 			y = std::strtod(iter, &iter);
 			type = std::strtol(iter, &iter, 10);
-		v_x = std::strtod(iter, &iter);
-		v_y = std::strtod(iter, &iter);
-		press = std::strtod(iter, &iter);
-		layer.emplace_back(x, y, type);
-	}
 
 			for (const char* value_name : additional_values_index) {
 				double value = std::strtod(iter, &iter);
