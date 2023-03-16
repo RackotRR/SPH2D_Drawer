@@ -48,7 +48,27 @@ inline Params loadParams(std::string filePath) {
 }
 
 namespace SPHFIO {
+	inline std::string EXPERIMENT_NAME;
 	inline std::string EXPERIMENT_DIRECTORY;
+	inline std::string SCREENSHOTS_PATH;
+	inline std::string VIDEOS_RAW_PATH;
+	inline std::string VIDEOS_PATH;
+
+	inline void initDrawingFilesystem(std::string experiment_name) {
+		EXPERIMENT_NAME = experiment_name;
+		EXPERIMENT_DIRECTORY = EXPERIMENT_NAME + "\\";
+
+		auto screenshots_path = std::filesystem::current_path().append(SPHFIO::EXPERIMENT_DIRECTORY + "screenshots\\");
+		std::filesystem::create_directory(screenshots_path);
+		SCREENSHOTS_PATH = screenshots_path.string();
+
+		auto videos_path = std::filesystem::current_path().append(SPHFIO::EXPERIMENT_DIRECTORY + "videos\\");
+		auto videos_raw_path = std::filesystem::current_path().append(SPHFIO::EXPERIMENT_DIRECTORY + "videos\\raw\\");
+		std::filesystem::create_directory(videos_path);
+		std::filesystem::create_directory(videos_raw_path);
+		VIDEOS_PATH = videos_path.string();
+		VIDEOS_RAW_PATH = videos_raw_path.string();
+	}
 
 	constexpr char VX_NAME[] = " vx ";
 	constexpr char VY_NAME[] = " vy ";
@@ -137,14 +157,12 @@ namespace SPHFIO {
 	}
 }
 
-inline auto ReadGridAndParams(std::string dirPath) {
-	SPHFIO::EXPERIMENT_DIRECTORY = dirPath;
-
+inline auto ReadGridAndParams() {
 	std::tuple<Grid, Square, double> tuple;
 	auto& [grid, square, dx] = tuple;
 	auto& [origin, size] = square;
 
-	Params params = loadParams(dirPath + "\\Params.json");
+	Params params = loadParams(SPHFIO::EXPERIMENT_DIRECTORY + "Params.json");
 	dx = params.dx;
 	auto& [origin_x, origin_y] = origin;
 	auto& [size_x, size_y] = size;
@@ -157,7 +175,7 @@ inline auto ReadGridAndParams(std::string dirPath) {
 
 	int step = 0;
 	while (true) {
-		auto path = std::filesystem::current_path().append(dirPath + "\\data\\" + std::to_string(step));
+		auto path = std::filesystem::current_path().append(SPHFIO::EXPERIMENT_DIRECTORY + "data\\" + std::to_string(step));
 		if (std::filesystem::exists(path)) {
 			meta.emplace_back(path.string());
 			step += params.save_step;

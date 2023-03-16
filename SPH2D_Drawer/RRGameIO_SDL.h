@@ -38,6 +38,8 @@ public:
 	void DrawCircle(const Vector2& center, double radius, const RRColor& color) override;
 
 	RRTexture LoadTextureFromFile(std::string_view path) override;
+
+	void MakeScreenshot(const std::string& path) override;
 private: 
 	bool IsInitialized{ false };
 

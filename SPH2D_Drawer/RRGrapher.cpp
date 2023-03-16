@@ -163,6 +163,9 @@ void RRGrapher::DefaultSetup() {
 	spaceSpeed = DEFAULT_SPACE_SPEED;
 	scaleCoord = DEFAULT_SCALE_COORD;
 	particleSize = 0;
+	lastRenderedLayer = ULLONG_MAX;
+	renderFrameCounter = 0;
+	videoCounter = 0;
 	timeToLayer = DEFAULT_TIME_TO_LAYER;
 	autoPlay = false;
 }

@@ -45,7 +45,11 @@ private:
 	static constexpr unsigned DEFAULT_TIME_TO_LAYER = 1;
 	unsigned timeToLayer{ 1 };
 	unsigned passedTime{};
-	  
+
+	unsigned renderFrameCounter{};
+	unsigned videoCounter{};
+	size_t lastRenderedLayer{ ULLONG_MAX };
+		  
 	Grid grid;
 	Square area;
 	HeatMap heatMap;

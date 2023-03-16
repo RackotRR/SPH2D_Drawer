@@ -5,13 +5,15 @@
 #include "FileInput.h"
 
 int main(int argc, char* argv[]) {      
-	std::string str;
-	std::cout << "experiment directory: " << std::endl;
-	std::getline(std::cin, str);
+	std::string experiment_name;
+	std::cout << "[SPH2D Drawer] experiment name: " << std::endl;
+	std::getline(std::cin, experiment_name);
 
 	try {
-		auto [grid, square, dx] = ReadGridAndParams(str);
-		RRGrapher::Instance().SetupHeatMap(0, 5000, "p");
+		SPHFIO::initDrawingFilesystem(experiment_name);
+
+		auto [grid, square, dx] = ReadGridAndParams();
+		RRGrapher::Instance().SetupHeatMap(0, 0, "r");
 		RRGrapher::Instance().Show(std::move(grid), square, dx);
 	}
 	catch (std::exception& e) {
