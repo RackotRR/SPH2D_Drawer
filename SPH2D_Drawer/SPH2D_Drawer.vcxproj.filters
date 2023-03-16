@@ -42,6 +42,12 @@
     <ClCompile Include="RRGameIO_SDL.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="RRGrapherInput.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HeatMap.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="RRGrapher.h">
@@ -87,6 +93,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Particle.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HeatMap2.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="FileInput.h">

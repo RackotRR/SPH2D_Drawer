@@ -55,6 +55,8 @@ public:
 	virtual void DrawCircle(const Vector2& center, double radius, const RRColor& color) = 0;
 
 	virtual RRTexture LoadTextureFromFile(std::string_view path) = 0;
+
+	virtual void MakeScreenshot(const std::string& path) = 0;
 protected:
 	RRGameIO() = default;
 	RRGameIO(const RRGameIO&) = delete;

@@ -80,12 +80,12 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>E:\Projects\LIBS\SDL\SDL2_image-2.0.5\include;E:\Projects\LIBS\SDL\SDL2_ttf-devel-2.0.15-VC\include;E:\Projects\LIBS\SDL\SDL2-2.0.16\include;E:\Projects\LIBS\json;E:\Projects\LIBS\mio\single_include</IncludePath>
+    <IncludePath>E:\Projects\LIBS\mio\single_include;E:\Projects\LIBS\json;E:\Projects\LIBS\SDL\SDL2-2.0.16\include;E:\Projects\LIBS\SDL\SDL2_ttf-devel-2.0.15-VC\include;E:\Projects\LIBS\SDL\SDL2_image-2.0.5\include;$(IncludePath)</IncludePath>
     <LibraryPath>E:\Projects\LIBS\SDL\SDL2-2.0.16\lib\x64;E:\Projects\LIBS\SDL\SDL2_image-2.0.5\lib\x64;E:\Projects\LIBS\SDL\SDL2_ttf-devel-2.0.15-VC\lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>E:\Projects\LIBS\SDL\SDL2_image-2.0.5\include;E:\Projects\LIBS\SDL\SDL2_ttf-devel-2.0.15-VC\include;E:\Projects\LIBS\SDL\SDL2-2.0.16\include;E:\Projects\LIBS\json;E:\Projects\LIBS\mio\single_include</IncludePath>
+    <IncludePath>E:\Projects\LIBS\mio\single_include;E:\Projects\LIBS\json;E:\Projects\LIBS\SDL\SDL2-2.0.16\include;E:\Projects\LIBS\SDL\SDL2_ttf-devel-2.0.15-VC\include;E:\Projects\LIBS\SDL\SDL2_image-2.0.5\include;$(IncludePath)</IncludePath>
     <LibraryPath>E:\Projects\LIBS\SDL\SDL2-2.0.16\lib\x64;E:\Projects\LIBS\SDL\SDL2_image-2.0.5\lib\x64;E:\Projects\LIBS\SDL\SDL2_ttf-devel-2.0.15-VC\lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -157,11 +157,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="HeatMap.cpp" />
     <ClCompile Include="Rectangle.cpp" />
     <ClCompile Include="RRController.cpp" />
     <ClCompile Include="RRGameIO_SDL.cpp" />
     <ClCompile Include="RRGameTime.cpp" />
     <ClCompile Include="RRGrapher.cpp" />
+    <ClCompile Include="RRGrapherInput.cpp" />
     <ClCompile Include="RRTextOutput.cpp" />
     <ClCompile Include="RRTextureManager.cpp" />
     <ClCompile Include="Source.cpp" />
@@ -169,6 +171,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FileInput.h" />
+    <ClInclude Include="HeatMap2.h" />
     <ClInclude Include="Mouse.h" />
     <ClInclude Include="Particle.h" />
     <ClInclude Include="Rectangle.h" />
