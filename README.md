@@ -1,5 +1,6 @@
 # SPH2D_Drawer
 Visualization tool for my SPH2D project
+![vx video](ReadmeFiles/video_vx_0.gif)
 
 It's based on parts of my first public c++ game [RAB_RTS_2](https://github.com/RackotRR/RAB_RTS_2). 
 Graphics here is **SDL2** library.
@@ -17,7 +18,9 @@ You can move across current time layer by mouse or by *IJKL* keys.
 
 There's some helpful capture utils here:
 Click by *C* takes a capture of rendered window and place it in *[experiment_name]/screenshots/* directory.
+![Pressure screenshot](ReadmeFiles/pressure_screenshot.png)
 When you hold *V* program takes captures every time a layer changes. When you release the key, program creates a *[video_name].bat* file which can create a video by means of **FFMPEG**. You can change commands in there in order to tune your video. Next *V* press starts new series of capturs in different folder, and after that creates another *.bat* file and so on.
+![vy video](ReadmeFiles/video_vy_1.gif)
 
 Partly the program can be controlled by console commands. For switching controll click *F1*.
 Type `help` to see available commands.
