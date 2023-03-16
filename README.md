@@ -21,7 +21,7 @@ Click by *C* takes a capture of rendered window and place it in *[experiment_nam
 ![Pressure screenshot](ReadmeFiles/r_39.png)
 ![Pressure screenshot](ReadmeFiles/vy_39.png)
 When you hold *V* program takes captures every time a layer changes. When you release the key, program creates a *[video_name].bat* file which can create a video by means of **FFMPEG**. You can change commands in there in order to tune your video. Next *V* press starts new series of capturs in different folder, and after that creates another *.bat* file and so on.
-![vy video](ReadmeFiles/video_vy_1.gif)
+![vy video](ReadmeFiles/video_vy_0.gif)
 
 Partly the program can be controlled by console commands. For switching controll click *F1*.
 Type `help` to see available commands.
