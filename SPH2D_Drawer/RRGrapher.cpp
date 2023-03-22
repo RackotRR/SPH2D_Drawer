@@ -1,6 +1,7 @@
 #include <limits>
 #include <algorithm>
 #include <iostream>
+#include <format>
 
 #include "RRGrapher.h"
 #include "RRGameIO.h"
@@ -16,7 +17,7 @@ void RRGrapher::SetupHeatMap(double min, double max, std::string variableName) {
 	heatMap.SetNew(min, max, variableName);
 }
 
-void RRGrapher::Show(Grid gridR, Square area, double particleSize) {
+void RRGrapher::Show(Grid gridR, Square area, double particleSize, double simulationTimePerLayer) {
 	auto& gameIO{ RRGameIO::Instance() };
 	try { 
 		gameIO.Initialize();
@@ -26,6 +27,7 @@ void RRGrapher::Show(Grid gridR, Square area, double particleSize) {
 		this->grid = std::move(gridR);
 		this->area = area;
 		this->particleSize = particleSize;
+		this->simulationTimePerLayer = simulationTimePerLayer;
 		this->passedTime = 0;
 
 		if (grid.empty()) {
@@ -128,6 +130,14 @@ void RRGrapher::DrawLegend() const {
 	gameIO.DrawLine({ int(w * 0.7), 0 }, Font::Menu, heatMap.GetVariableName());
 }
 
+void RRGrapher::DrawTime() const {
+	constexpr double t0 = 0;
+	double t = t0 + currentLayer * simulationTimePerLayer;
+	auto& gameIO{ RRGameIO::Instance() };
+	int w = gameIO.GetWinWidth();
+	RRGameIO::Instance().DrawLine({ (int)(w * 0.05f), 0}, Font::Menu, std::format("{:.3f}", t));
+}
+
 
 void RRGrapher::ComputeStartScale() { 
 	auto& gameIO{ RRGameIO::Instance() };
@@ -162,7 +172,6 @@ void RRGrapher::DefaultSetup() {
 	deltaY = 0;
 	spaceSpeed = DEFAULT_SPACE_SPEED;
 	scaleCoord = DEFAULT_SCALE_COORD;
-	particleSize = 0;
 	lastRenderedLayer = ULLONG_MAX;
 	renderFrameCounter = 0;
 	videoCounter = 0;
@@ -209,5 +218,6 @@ void RRGrapher::UpdateDraw() const {
 	gameIO.Begin(RRColor::White());
 	DrawLayer();
 	DrawLegend();
+	DrawTime();
 	gameIO.End();
 }

@@ -159,12 +159,14 @@ namespace SPHFIO {
 }
 
 inline auto ReadGridAndParams() {
-	std::tuple<Grid, Square, double> tuple;
-	auto& [grid, square, dx] = tuple;
+	Grid grid;
+	Square square;
 	auto& [origin, size] = square;
+	double dx, timePerLayer;
 
 	Params params = loadParams(SPHFIO::EXPERIMENT_DIRECTORY + "Params.json");
 	dx = params.dx;
+	timePerLayer = params.dt * params.save_step;
 	auto& [origin_x, origin_y] = origin;
 	auto& [size_x, size_y] = size;
 	origin_x = params.x_origin;
@@ -196,5 +198,5 @@ inline auto ReadGridAndParams() {
 	}
 
 	std::cout << "finish loading" << std::endl;
-	return tuple;
+	return std::make_tuple(grid, square, dx, timePerLayer);
 }

@@ -16,11 +16,12 @@ class RRGrapher {
 public:
 	static RRGrapher& Instance();
 
-	void Show(Grid grid, Square area, double particleSize);
+	void Show(Grid grid, Square area, double particleSize, double simulationTimePerLayer);
 	void SetupHeatMap(double min, double max, std::string variableName);
 private:
 	void DrawLayer() const;
 	void DrawLegend() const;
+	void DrawTime() const;
 	void UpdateDraw() const;
 
 	void ComputeStartScale();
@@ -55,6 +56,7 @@ private:
 	HeatMap heatMap;
 
 	double particleSize{};
+	double simulationTimePerLayer{};
 
 	static constexpr double DEFAULT_SCALE_COORD = 1;
 	double scaleCoord{ DEFAULT_SCALE_COORD };

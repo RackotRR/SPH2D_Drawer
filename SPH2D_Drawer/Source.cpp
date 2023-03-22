@@ -12,9 +12,9 @@ int main(int argc, char* argv[]) {
 	try {
 		SPHFIO::initDrawingFilesystem(experiment_name);
 
-		auto [grid, square, dx] = ReadGridAndParams();
+		auto [grid, square, dx, timePerLayer] = ReadGridAndParams();
 		RRGrapher::Instance().SetupHeatMap(0, 0, "r");
-		RRGrapher::Instance().Show(std::move(grid), square, dx);
+		RRGrapher::Instance().Show(std::move(grid), square, dx, timePerLayer);
 	}
 	catch (std::exception& e) {
 		std::cout << e.what() << std::endl;
