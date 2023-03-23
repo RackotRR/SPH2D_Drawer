@@ -30,7 +30,7 @@ public:
 			return variableName_;
 		}
 
-		static std::unordered_map<std::string, Preset> FindPresets();
+		static std::unordered_map<std::string, Preset> FindPresets(const std::string& experiment_directory);
 	private:
 		double min_;
 		double max_;

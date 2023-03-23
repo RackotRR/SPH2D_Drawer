@@ -179,7 +179,7 @@ void RRGrapher::InitConsoleCommands() {
 			std::cout << "preset installed" << std::endl;
 		}
 		else if (subcommand == "preset") {
-			auto heatmap_presets = HeatMap::Preset::FindPresets();
+			auto heatmap_presets = HeatMap::Preset::FindPresets(SPHFIO::EXPERIMENT_DIRECTORY);
 			for (auto& [preset_name, preset] : heatmap_presets) {
 				std::cout << preset_name << ": " << preset.VariableName() << " (" << preset.Min() << "; " << preset.Max() << ")" << std::endl;
 			}
