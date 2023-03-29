@@ -16,8 +16,9 @@ int main(int argc, char* argv[]) {
 		auto square = sphfio.getSquare();
 		auto grid = sphfio.takeGrid();
 		auto dx = sphfio.getParams().dx;
+		auto timePerLayer = sphfio.getParams().dt * sphfio.getParams().save_step;
 		RRGrapher::Instance().SetupHeatMap(0, 0, "r");
-		RRGrapher::Instance().Show(std::move(grid), square, dx);
+		RRGrapher::Instance().Show(std::move(grid), square, dx, timePerLayer);
 	}
 	catch (std::exception& e) {
 		std::cout << e.what() << std::endl;
