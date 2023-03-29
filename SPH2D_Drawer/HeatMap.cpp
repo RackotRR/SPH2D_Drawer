@@ -1,13 +1,13 @@
-#include "HeatMap2.h"
 #include <fstream>
 #include <iostream>
 #include <sstream>
-#include "FileInput.h"
+#include "HeatMap2.h"
+#include "SPH2D_FIO.h"
 
 std::unordered_map<std::string, HeatMap::Preset> 
 HeatMap::Preset::FindPresets() {
     std::unordered_map<std::string, HeatMap::Preset> presets;
-    std::string filename = SPHFIO::EXPERIMENT_DIRECTORY + "\\heatmap_presets.txt";
+    std::string filename = SPHFIO::instance().getExperimentDirectory()  + "heatmap_presets.txt";
     std::ifstream stream{ filename };
 
     if (stream.is_open()) {
