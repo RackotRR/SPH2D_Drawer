@@ -2,7 +2,7 @@
 #include <string>
 
 #include "RRGrapher.h"  
-#include "FileInput.h"
+//#include "FileInput.h"
 
 int main(int argc, char* argv[]) {      
 	std::string experiment_name;
@@ -10,9 +10,13 @@ int main(int argc, char* argv[]) {
 	std::getline(std::cin, experiment_name);
 
 	try {
-		SPHFIO::initDrawingFilesystem(experiment_name);
+		auto& sphfio = SPHFIO::instance();
+		sphfio.init(experiment_name);
 
-		auto [grid, square, dx, timePerLayer] = ReadGridAndParams();
+		auto square = sphfio.getSquare();
+		auto grid = sphfio.takeGrid();
+		auto dx = sphfio.getParams().dx;
+		auto timePerLayer = sphfio.getParams().dt * sphfio.getParams().save_step;
 		RRGrapher::Instance().SetupHeatMap(0, 0, "r");
 		RRGrapher::Instance().Show(std::move(grid), square, dx, timePerLayer);
 	}

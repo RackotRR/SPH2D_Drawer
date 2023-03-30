@@ -5,7 +5,7 @@
 #include <array>
 #include <vector>
 
-#include "Particle.h"
+#include "SPH2D_FIO.h"
 #include "HeatMap2.h"
 
 using Square = std::pair<std::pair<double, double>, std::pair<double, double>>;
