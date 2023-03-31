@@ -12,9 +12,14 @@ target_link_libraries(SPH2D_Drawer PRIVATE
     RRHeatMap
 )
 
-find_package(SPH2D_FIO)
-target_link_libraries(SPH2D_Drawer PRIVATE ${SPH2D_FIO_LIBRARIES})
-target_include_directories(SPH2D_Drawer PRIVATE ${SPH2D_FIO_INCLUDE_DIRECTORIES})
+if (NOT TARGET SPH2D_FIO)
+    find_package(SPH2D_FIO)
+    add_library(SPH2D_FIO INTERFACE)
+    target_link_libraries(SPH2D_FIO INTERFACE ${SPH2D_FIO_LIBRARIES})
+    target_include_directories(SPH2D_FIO INTERFACE ${SPH2D_FIO_INCLUDE_DIRECTORIES})
+endif()
+
+target_link_libraries(SPH2D_Drawer PRIVATE SPH2D_FIO)
 
 install(TARGETS SPH2D_Drawer DESTINATION ${SPH2D_DRAWER_INSTALL_DESTINATION})
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/fonts DESTINATION ${SPH2D_DRAWER_INSTALL_DESTINATION})
