@@ -1,8 +1,9 @@
 #pragma once
-#include "RRColor.h"
 #include <map>
 #include <string>
 #include <unordered_map>
+
+#include <RRColor.h>
 
 class HeatMap {
 public:

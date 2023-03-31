@@ -5,8 +5,8 @@
 #include <array>
 #include <vector>
 
-#include "SPH2D_FIO.h"
-#include "HeatMap2.h"
+#include <SPH2D_FIO.h>
+#include "HeatMap.h"
 
 using Square = std::pair<std::pair<double, double>, std::pair<double, double>>;
 using TimeLayer = std::vector<Particle>; 
@@ -16,7 +16,8 @@ class RRGrapher {
 public:
 	static RRGrapher& Instance();
 
-	void Show(Grid grid, Square area, double particleSize, double simulationTimePerLayer);
+	void Init(std::string experiment_name);
+	void Show();
 	void SetupHeatMap(double min, double max, std::string variableName);
 private:
 	void DrawLayer() const;
@@ -69,4 +70,5 @@ private:
 	size_t currentLayer{};
 
 	std::unordered_map<std::string, std::function<void()>> commands;
+	std::unique_ptr<SPHFIO> sphfio;
 };

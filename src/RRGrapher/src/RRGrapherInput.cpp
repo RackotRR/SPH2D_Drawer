@@ -74,7 +74,7 @@ void RRGrapher::UpdateControls() {
 
 	if (keyState.Click(RRKeyboardState::Keys::C)) {
 		std::string filename = std::format("{}_{}", heatMap.GetVariableName(), currentLayer);
-		RRGameIO::Instance().MakeScreenshot(SPHFIO::instance().getScreenshotsDirectory() + filename);
+		RRGameIO::Instance().MakeScreenshot(sphfio->getScreenshotsDirectory() + filename);
 	}
 
 	if (keyState.IsKeyDown(RRKeyboardState::Keys::V)) {
@@ -82,21 +82,21 @@ void RRGrapher::UpdateControls() {
 			lastRenderedLayer = currentLayer;
 			std::string video_name = std::format("{}_{}", heatMap.GetVariableName(), videoCounter);
 			std::string filename = std::format("{}_{}", video_name, renderFrameCounter++);
-			std::string directory = SPHFIO::instance().getVideosRawDirectory() + video_name;
+			std::string directory = sphfio->getVideosRawDirectory() + video_name;
 			std::filesystem::create_directory(directory);
-			RRGameIO::Instance().MakeScreenshot(std::format("{0}\\{1}", directory, filename));
+			RRGameIO::Instance().MakeScreenshot(std::format("{0}/{1}", directory, filename));
 		}
 	}
 	else {
 		renderFrameCounter = 0;
 		lastRenderedLayer = ULLONG_MAX;
 		if (keyState.OldIsKeyDown(RRKeyboardState::Keys::V)) {
-			std::string video_name = std::format("{}_video_{}_{}", SPHFIO::instance().getExperimentName(), heatMap.GetVariableName(), videoCounter);
-			std::string directory = std::format("{}{}_{}", SPHFIO::instance().getVideosRawDirectory(), heatMap.GetVariableName(), videoCounter);
-			std::string command = std::format("ffmpeg -framerate 30 -i {}\\{}_{}_%%d.png -c:v libx264 -pix_fmt yuv420p {}.mp4", 
+			std::string video_name = std::format("{}_video_{}_{}", sphfio->getExperimentName(), heatMap.GetVariableName(), videoCounter);
+			std::string directory = std::format("{}{}_{}", sphfio->getVideosRawDirectory(), heatMap.GetVariableName(), videoCounter);
+			std::string command = std::format("ffmpeg -framerate 30 -i {}/{}_{}_%%d.png -c:v libx264 -pix_fmt yuv420p {}.mp4", 
 				directory, heatMap.GetVariableName(), videoCounter, video_name);
 
-			std::ofstream stream(std::format("{}{}.bat", SPHFIO::instance().getVideosDirectory(), video_name));
+			std::ofstream stream(std::format("{}{}.bat", sphfio->getVideosDirectory(), video_name));
 			stream << "@echo off" << std::endl << command << std::endl;
 			videoCounter++;
 		}
@@ -181,7 +181,7 @@ void RRGrapher::InitConsoleCommands() {
 			std::cout << "preset installed" << std::endl;
 		}
 		else if (subcommand == "preset") {
-			auto heatmap_presets = HeatMap::Preset::FindPresets(SPHFIO::EXPERIMENT_DIRECTORY);
+			auto heatmap_presets = HeatMap::Preset::FindPresets(sphfio->getExperimentDirectory());
 			for (auto& [preset_name, preset] : heatmap_presets) {
 				std::cout << preset_name << ": " << preset.VariableName() << " (" << preset.Min() << "; " << preset.Max() << ")" << std::endl;
 			}

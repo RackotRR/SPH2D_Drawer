@@ -1,21 +1,11 @@
-cmake_minimum_required(VERSION 3.20)
+cmake_minimum_required(VERSION 3.15)
 
 project(RRGame)
 
-find_package(SDL)
-if(NOT SDL_FOUND)
-    message(FATAL_ERROR "Can't find SDL")
-endif()
+find_package(SDL2 REQUIRED)
+find_package(SDL2_image REQUIRED)
+find_package(SDL2_ttf REQUIRED)
 
-find_package(SDL_image)
-if(NOT SDL_IMAGE_FOUND)
-    message(FATAL_ERROR "Can't find SDL_image")
-endif()
-
-find_package(SDL_ttf)
-if(NOT SDL_TTF_FOUND)
-    message(FATAL_ERROR "Can't find SDL_ttf")
-endif()
 
 add_library(RRGame STATIC
     src/RRGameIO_SDL.cpp
@@ -27,6 +17,10 @@ add_library(RRGame STATIC
     src/Vector2.cpp
 )
 target_include_directories(RRGame PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
-target_link_libraries(RRGame
-    SDL::SDL
+target_include_directories(RRGame PRIVATE
+    ${SDL2_INCLUDE_DIR} ${SDL2_IMAGE_INCLUDE_DIR} ${SDL2_TTF_INCLUDE_DIR}
+)
+target_link_libraries(RRGame PRIVATE
+    ${SDL2_LIBRARIES} ${SDL2_IMAGE_LIBRARIES} ${SDL2_TTF_LIBRARIES}
+    RRColor
 )

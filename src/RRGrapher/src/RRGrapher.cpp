@@ -17,17 +17,21 @@ void RRGrapher::SetupHeatMap(double min, double max, std::string variableName) {
 	heatMap.SetNew(min, max, variableName);
 }
 
-void RRGrapher::Show(Grid gridR, Square area, double particleSize, double simulationTimePerLayer) {
+void RRGrapher::Init(std::string experiment_name) {
+	sphfio = std::make_unique<SPHFIO>(experiment_name);
+
+	grid = sphfio->takeGrid();
+	area = sphfio->getSquare();
+	particleSize = params.delta;
+	simulationTimePerLayer = params.dt * params.save_step;
+}
+void RRGrapher::Show() {
 	auto& gameIO{ RRGameIO::Instance() };
 	try { 
 		gameIO.Initialize();
 		InitConsoleCommands();
 		DefaultSetup();
 
-		this->grid = std::move(gridR);
-		this->area = area;
-		this->particleSize = particleSize;
-		this->simulationTimePerLayer = simulationTimePerLayer;
 		this->passedTime = 0;
 
 		if (grid.empty()) {
