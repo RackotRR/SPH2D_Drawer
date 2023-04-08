@@ -63,6 +63,8 @@ private:
 	double deltaX{};
 	double deltaY{};
 
+	bool scientificMode{ true };
+
 	size_t currentLayer{};
 
 	std::unordered_map<std::string, std::function<void()>> commands;

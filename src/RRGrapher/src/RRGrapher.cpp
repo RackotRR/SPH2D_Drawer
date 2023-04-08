@@ -90,12 +90,13 @@ void RRGrapher::DrawLayer() const {
 
 		auto& variableName = heatMap.GetVariableName();
 		if (getValueFunctions.contains(variableName)) {
-			auto getValueFunction = getValueFunctions[variableName];
+			auto& getValueFunction = getValueFunctions[variableName];
 			auto value = getValueFunction(particle);
 			gameIO.DrawRectangle(Rectangle{ pos.X, pos.Y,
 				1 + int(particleSize * scaleCoord),
 				1 + int(particleSize * scaleCoord) },
-				heatMap.GetNewColorForNum(value));
+				particle.itype == 2 ? heatMap.GetNewColorForNum(value) : virtualColor);
+				
 		}
 		else {
 			gameIO.DrawRectangle(Rectangle{ pos.X, pos.Y, 
@@ -218,9 +219,15 @@ void RRGrapher::UpdateAutoPlay() {
 
 void RRGrapher::UpdateDraw() const {
 	auto& gameIO{ RRGameIO::Instance() };
-	gameIO.Begin(RRColor::White());
+	static constexpr RRColor whiteColor = RRColor::White();
+	static constexpr RRColor blackColor = RRColor::Black();
+	gameIO.Begin(scientificMode ? whiteColor : blackColor);
+
 	DrawLayer();
-	DrawLegend();
-	DrawTime();
+	if (scientificMode) {
+		DrawLegend();
+		DrawTime();
+	}
+
 	gameIO.End();
 }
