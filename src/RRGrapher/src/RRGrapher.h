@@ -8,10 +8,6 @@
 #include <SPH2D_FIO.h>
 #include "HeatMap.h"
 
-using Square = std::pair<std::pair<double, double>, std::pair<double, double>>;
-using TimeLayer = std::vector<Particle>; 
-using Grid = std::vector<TimeLayer>;
-
 class RRGrapher {
 public:
 	static RRGrapher& Instance();
