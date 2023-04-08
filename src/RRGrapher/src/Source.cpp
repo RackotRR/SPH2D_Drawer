@@ -3,14 +3,12 @@
 
 #include "RRGrapher.h"  
 
-int main(int argc, char* argv[]) {      
-	std::string experiment_name;
-	std::cout << "[SPH2D Drawer] experiment name: " << std::endl;
-	std::getline(std::cin, experiment_name);
+int main(int argc, char* argv[]) {
+	std::cout << "[SPH2D Drawer]" << std::endl;
 
 	try {
 		RRGrapher::Instance().SetupHeatMap(0, 0, "r");
-		RRGrapher::Instance().Init(experiment_name);
+		RRGrapher::Instance().Init();
 		RRGrapher::Instance().Show();
 	}
 	catch (std::exception& e) {

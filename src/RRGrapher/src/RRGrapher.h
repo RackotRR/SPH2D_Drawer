@@ -16,7 +16,7 @@ class RRGrapher {
 public:
 	static RRGrapher& Instance();
 
-	void Init(std::string experiment_name);
+	void Init();
 	void Show();
 	void SetupHeatMap(double min, double max, std::string variableName);
 private:

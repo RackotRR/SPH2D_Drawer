@@ -17,8 +17,8 @@ void RRGrapher::SetupHeatMap(double min, double max, std::string variableName) {
 	heatMap.SetNew(min, max, variableName);
 }
 
-void RRGrapher::Init(std::string experiment_name) {
-	sphfio = std::make_unique<SPHFIO>(experiment_name);
+void RRGrapher::Init() {
+	sphfio = std::make_unique<SPHFIO>();
 
 	grid = sphfio->takeGrid();
 	area = sphfio->getSquare();
@@ -59,8 +59,7 @@ void RRGrapher::DrawLayer() const {
 		GET_VARIABLE_BY_NAME(vx),
 		GET_VARIABLE_BY_NAME(vy),
 		GET_VARIABLE_BY_NAME(p),
-		GET_VARIABLE_BY_NAME(rho),
-		GET_VARIABLE_BY_NAME(u)
+		GET_VARIABLE_BY_NAME(rho)
 	};
 
 	// Нарисовать границы квадрата:
