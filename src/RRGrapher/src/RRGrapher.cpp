@@ -62,44 +62,29 @@ void RRGrapher::DrawLayer() const {
 		GET_VARIABLE_BY_NAME(rho)
 	};
 
-	// Нарисовать границы квадрата:
-	const auto& [origin, size] = area;
-	double x0{ origin.first };
-	double x1{ origin.first + size.first };
-	double y0{ origin.second };
-	double y1{ origin.second + size.second };
-
 	double bottomY{ gameIO.GetWinHeight() * 0.8 };
-
-	auto toScreenX{ 
-		[=](double x) {
-			return static_cast<int>(deltaX + x * scaleCoord);
-		}
-	};
-	auto toScreenY{
-		[=](double y) {
-			return static_cast<int>(bottomY - (deltaY + y * scaleCoord));
-		}
-	};
 
 	constexpr RRColor realColor = RRColor::Blue();
 	constexpr RRColor virtualColor = RRColor::Black();
 	 
 	for (auto& particle : layer) {
-		Vector2 pos{ toScreenX(particle.x), toScreenY(particle.y) };
+		Vector2 screenPos{ 
+			static_cast<int>(deltaX + particle.x * scaleCoord),
+			static_cast<int>(bottomY - (deltaY + particle.y * scaleCoord)) 
+		};
 
 		auto& variableName = heatMap.GetVariableName();
 		if (getValueFunctions.contains(variableName)) {
 			auto& getValueFunction = getValueFunctions[variableName];
 			auto value = getValueFunction(particle);
-			gameIO.DrawRectangle(Rectangle{ pos.X, pos.Y,
+			gameIO.DrawRectangle(Rectangle{ screenPos.X, screenPos.Y,
 				1 + int(particleSize * scaleCoord),
 				1 + int(particleSize * scaleCoord) },
 				particle.itype == 2 ? heatMap.GetNewColorForNum(value) : virtualColor);
 				
 		}
 		else {
-			gameIO.DrawRectangle(Rectangle{ pos.X, pos.Y, 
+			gameIO.DrawRectangle(Rectangle{ screenPos.X, screenPos.Y,
 				1 + int(particleSize * scaleCoord), 
 				1 + int(particleSize * scaleCoord) },
 				particle.itype == 2 ? realColor : virtualColor);
@@ -142,6 +127,24 @@ void RRGrapher::DrawTime() const {
 	RRGameIO::Instance().DrawLine({ (int)(w * 0.05f), 0}, Font::Menu, std::format("{:.3f}", t));
 }
 
+void RRGrapher::DrawCoords() const {
+	if (!enableCoords) return;
+	auto& gameIO{ RRGameIO::Instance() };
+
+	auto& mouseState = RRController::Instance().GetMouseState();
+	auto& [screenX, screenY] = mouseState.Position;
+	double bottomY{ gameIO.GetWinHeight() * 0.8 };
+	
+	double x = (screenX - deltaX) / scaleCoord;
+	double y = (bottomY - screenY - deltaY) / scaleCoord;
+
+	int w = gameIO.GetWinWidth();
+	int h = gameIO.GetWinHeight();
+	RRGameIO::Instance().DrawLine(
+		{ (int)(w * 0.05f), (int)(h * 0.05f)},
+		Font::Menu, 
+		std::format("XY: ({:.3f}; {:.3f})", x, y));
+}
 
 void RRGrapher::ComputeStartScale() { 
 	auto& gameIO{ RRGameIO::Instance() };
@@ -181,6 +184,8 @@ void RRGrapher::DefaultSetup() {
 	videoCounter = 0;
 	timeToLayer = DEFAULT_TIME_TO_LAYER;
 	autoPlay = false;
+	scientificMode = true;
+	enableCoords = false;
 }
 
 void RRGrapher::RunWindowCycle() { 
@@ -227,6 +232,7 @@ void RRGrapher::UpdateDraw() const {
 	if (scientificMode) {
 		DrawLegend();
 		DrawTime();
+		DrawCoords();
 	}
 
 	gameIO.End();

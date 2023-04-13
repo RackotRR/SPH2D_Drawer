@@ -19,6 +19,7 @@ private:
 	void DrawLayer() const;
 	void DrawLegend() const;
 	void DrawTime() const;
+	void DrawCoords() const;
 	void UpdateDraw() const;
 
 	void ComputeStartScale();
@@ -64,6 +65,7 @@ private:
 	double deltaY{};
 
 	bool scientificMode{ true };
+	bool enableCoords{ false };
 
 	size_t currentLayer{};
 

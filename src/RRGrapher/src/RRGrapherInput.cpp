@@ -143,6 +143,7 @@ void RRGrapher::InitConsoleCommands() {
 			POSSIBLE_VARIABLE_TO_SET(particleSize);
 			POSSIBLE_VARIABLE_TO_SET(currentLayer);
 			POSSIBLE_VARIABLE_TO_SET(scientificMode);
+			POSSIBLE_VARIABLE_TO_SET(enableCoords);
 #undef POSSIBLE_VARIABLE_TO_SET
 		}
 
@@ -155,6 +156,7 @@ void RRGrapher::InitConsoleCommands() {
 		COMMAND_SET_VARIABLE(particleSize);
 		COMMAND_SET_VARIABLE(currentLayer);
 		COMMAND_SET_VARIABLE(scientificMode);
+		COMMAND_SET_VARIABLE(enableCoords);
 #undef COMMAND_SET_VARIABLE
 	});
 
