@@ -73,7 +73,7 @@ void RRGrapher::UpdateControls() {
 	}
 
 	if (keyState.Click(RRKeyboardState::Keys::C)) {
-		std::string filename = std::format("{}_{}", heatMap.GetVariableName(), currentLayer);
+		std::string filename = std::format("{}_{}_{}", heatMap.GetVariableName(), currentLayer, time(NULL));
 		RRGameIO::Instance().MakeScreenshot(sphfio->getScreenshotsDirectory() + filename);
 	}
 
