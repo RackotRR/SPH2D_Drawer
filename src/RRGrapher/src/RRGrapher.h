@@ -7,6 +7,7 @@
 
 #include <SPH2D_FIO.h>
 #include "HeatMap.h"
+#include "Vector2.h"
 
 class RRGrapher {
 public:
@@ -21,6 +22,8 @@ private:
 	void DrawTime() const;
 	void DrawCoords() const;
 	void UpdateDraw() const;
+
+	Vector2 getScreenPos(double x, double y) const;
 
 	void ComputeStartScale();
 	void Stop();
@@ -49,8 +52,8 @@ private:
 	unsigned videoCounter{};
 	size_t lastRenderedLayer{ ULLONG_MAX };
 		  
-	Grid grid;
-	Square area;
+	std::unique_ptr<sphfio::Grid> grid;
+	sphfio::Square area;
 	HeatMap heatMap;
 
 	double particleSize{};
@@ -70,5 +73,6 @@ private:
 	size_t currentLayer{};
 
 	std::unordered_map<std::string, std::function<void()>> commands;
-	std::unique_ptr<SPHFIO> sphfio;
+	std::unique_ptr<sphfio::SPHFIO> sphfio;
+	sphfio::ParamsPtr params;
 };

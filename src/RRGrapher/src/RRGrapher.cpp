@@ -18,12 +18,13 @@ void RRGrapher::SetupHeatMap(double min, double max, std::string variableName) {
 }
 
 void RRGrapher::Init() {
-	sphfio = std::make_unique<SPHFIO>();
+	sphfio = std::make_unique<sphfio::SPHFIO>();
+	params = sphfio->getParams();
 
-	grid = sphfio->takeGrid();
-	area = sphfio->getSquare();
-	particleSize = params.delta;
-	simulationTimePerLayer = params.dt * params.save_step;
+	grid = std::make_unique<sphfio::Grid>(sphfio->makeGrid());
+	area = sphfio::Square{ sphfio->getParams() };
+	particleSize = params->delta;
+	simulationTimePerLayer = params->dt * params->save_step;
 }
 void RRGrapher::Show() {
 	auto& gameIO{ RRGameIO::Instance() };
@@ -34,7 +35,7 @@ void RRGrapher::Show() {
 
 		this->passedTime = 0;
 
-		if (grid.empty()) {
+		if (grid->empty()) {
 			throw std::runtime_error("Grid had no time layers!");
 		} 
 
@@ -50,44 +51,56 @@ void RRGrapher::Show() {
 	}
 }
 
-void RRGrapher::DrawLayer() const {
-	auto& layer{ grid[currentLayer] };
-	auto& gameIO{ RRGameIO::Instance() };	  
+Vector2 RRGrapher::getScreenPos(double x, double y) const {
+	double bottomY{ RRGameIO::Instance().GetWinHeight() * 0.8};
 
-#define GET_VARIABLE_BY_NAME(variable) { #variable, [](const Particle& part) { return part.variable; } }
-	static std::unordered_map<std::string, std::function<double(const Particle& part)>> getValueFunctions{
-		GET_VARIABLE_BY_NAME(vx),
-		GET_VARIABLE_BY_NAME(vy),
-		GET_VARIABLE_BY_NAME(p),
-		GET_VARIABLE_BY_NAME(rho)
+	return Vector2{
+		static_cast<int>(deltaX + x * scaleCoord),
+		static_cast<int>(bottomY - (deltaY + y * scaleCoord))
 	};
+}
 
-	double bottomY{ gameIO.GetWinHeight() * 0.8 };
+void RRGrapher::DrawLayer() const {
+	auto& layer{ grid->at(currentLayer) };
+	auto& gameIO{ RRGameIO::Instance() };	 
 
+	constexpr int realType = 2;
+	constexpr int virtualType = -2;
 	constexpr RRColor realColor = RRColor::Blue();
 	constexpr RRColor virtualColor = RRColor::Black();
-	 
-	for (auto& particle : layer) {
-		Vector2 screenPos{ 
-			static_cast<int>(deltaX + particle.x * scaleCoord),
-			static_cast<int>(bottomY - (deltaY + particle.y * scaleCoord)) 
-		};
-
-		auto& variableName = heatMap.GetVariableName();
-		if (getValueFunctions.contains(variableName)) {
-			auto& getValueFunction = getValueFunctions[variableName];
-			auto value = getValueFunction(particle);
-			gameIO.DrawRectangle(Rectangle{ screenPos.X, screenPos.Y,
-				1 + int(particleSize * scaleCoord),
-				1 + int(particleSize * scaleCoord) },
-				particle.itype == 2 ? heatMap.GetNewColorForNum(value) : virtualColor);
-				
+		 
+	auto& variableName = heatMap.GetVariableName();
+	if (sphfio->isAdditionalValuePresented(variableName)) {
+		for (rr_uint i = 0; i < layer.ntotal; ++i) {
+			rr_float2 r = layer.r(i);
+			Vector2 screenPos = getScreenPos(r.x, r.y);
+			auto value = layer.getByTag(variableName, i);
+			gameIO.DrawRectangle(
+				Rectangle{ 
+					screenPos.X, 
+					screenPos.Y,
+					1 + int(particleSize * scaleCoord),
+					1 + int(particleSize * scaleCoord) 
+				},
+				layer.itype(i) == realType ? 
+					heatMap.GetNewColorForNum(value) : 
+					virtualColor);
 		}
-		else {
-			gameIO.DrawRectangle(Rectangle{ screenPos.X, screenPos.Y,
-				1 + int(particleSize * scaleCoord), 
-				1 + int(particleSize * scaleCoord) },
-				particle.itype == 2 ? realColor : virtualColor);
+	}
+	else {
+		for (rr_iter i = 0; i < layer.ntotal; ++i) {
+			rr_float2 r = layer.r(i);
+			Vector2 screenPos = getScreenPos(r.x, r.y);
+			gameIO.DrawRectangle(
+				Rectangle{ 
+					screenPos.X, 
+					screenPos.Y,
+					1 + int(particleSize * scaleCoord),
+					1 + int(particleSize * scaleCoord) 
+				},
+				layer.itype(i) == realType ? 
+					realColor : 
+					virtualColor);
 		}
 	}
 }
@@ -153,20 +166,15 @@ void RRGrapher::ComputeStartScale() {
 	int endX{ gameIO.GetWinWidth() };
 	int endY{ gameIO.GetWinHeight() };
 
-	double areaWidth{ area.second.first };
-	double areaHeight{ area.second.second };
-	double areaX{ area.first.first };
-	double areaY{ area.first.second };
-
 	if (gameIO.GetWinWidth() <= gameIO.GetWinHeight()) {
-		scaleCoord = endY / areaHeight;		
+		scaleCoord = endY / area.size_y;		
 	}
 	else {
-		scaleCoord = endX / areaWidth;
+		scaleCoord = endX / area.size_x;
 	}
 
-	deltaX = startX - areaX * scaleCoord;
-	deltaY = startY - areaY * scaleCoord;
+	deltaX = startX - area.origin_x * scaleCoord;
+	deltaY = startY - area.origin_y * scaleCoord;
 }
 
 void RRGrapher::Stop() {
@@ -212,7 +220,7 @@ void RRGrapher::UpdateAutoPlay() {
 		passedTime += RRGameTime::Instance().GetPassedTime();
 		if (passedTime > timeToLayer) {
 			passedTime = 0;
-			if (currentLayer < grid.size() - 1) {
+			if (currentLayer < grid->size() - 1) {
 				currentLayer++;
 			}
 			else {

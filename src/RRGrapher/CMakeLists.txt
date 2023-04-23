@@ -13,7 +13,7 @@ target_link_libraries(SPH2D_Drawer PRIVATE
 )
 
 if (NOT TARGET SPH2D_FIO)
-    find_package(SPH2D_FIO)
+    find_package(SPH2D_FIO REQUIRED)
     add_library(SPH2D_FIO INTERFACE)
     target_link_libraries(SPH2D_FIO INTERFACE ${SPH2D_FIO_LIBRARIES})
     target_include_directories(SPH2D_FIO INTERFACE ${SPH2D_FIO_INCLUDE_DIRECTORIES})

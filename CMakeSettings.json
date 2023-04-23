@@ -62,6 +62,11 @@
           "name": "SDL2_TTF_INCLUDE_DIR",
           "value": "E:/Projects/LIBS/SDL/SDL2_ttf-devel-2.0.15-VC/include",
           "type": "PATH"
+        },
+        {
+          "name": "SPH2D_OMP_DIR",
+          "value": "C:/Users/alexa/source/repos/SPH2D/out/install/x64-Release/SPH2D/tools/SPH2D_OMP_SHARED",
+          "type": "PATH"
         }
       ]
     }
