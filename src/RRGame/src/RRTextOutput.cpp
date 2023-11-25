@@ -1,6 +1,7 @@
 #include "RRTextOutput.h"
 #include <limits>
 #include <stdexcept>
+#include <filesystem>
 
 RRTextOutput& RRTextOutput::Instance() {
 	static RRTextOutput instance;
@@ -31,7 +32,8 @@ void RRTextOutput::Shutdown() {
 }
 
 void RRTextOutput::InitFonts() {
-	LoadFont(Font::Menu, "fonts\\FreeMono.ttf", 24, RRColor::Black(), TTF_STYLE_BOLD);
+	auto fonts_dir = std::filesystem::path("fonts");
+	LoadFont(Font::Menu, fonts_dir / "FreeMono.ttf", 24, RRColor::Black(), TTF_STYLE_BOLD);
 	/*
 	המבאגÿכול חהוסü םמגûו רנטפעû
 	*/ 

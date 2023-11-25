@@ -70,6 +70,9 @@ private:
 	bool scientificMode{ true };
 	bool enableCoords{ false };
 
+	bool certainTypes{ false };
+	int showType{};
+
 	size_t currentLayer{};
 
 	std::unordered_map<std::string, std::function<void()>> commands;

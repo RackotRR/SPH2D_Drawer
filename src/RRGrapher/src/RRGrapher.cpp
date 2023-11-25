@@ -89,6 +89,8 @@ void RRGrapher::DrawLayer() const {
 	}
 	else {
 		for (rr_iter i = 0; i < layer.ntotal; ++i) {
+			if (certainTypes && layer.itype(i) != showType) continue;
+			
 			rr_float2 r = layer.r(i);
 			Vector2 screenPos = getScreenPos(r.x, r.y);
 			gameIO.DrawRectangle(

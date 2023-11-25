@@ -3,7 +3,7 @@
 #include "RRGameIO.h"
 
 #include "SPH2D_FIO.h"
-#include <format>
+#include <fmt/format.h>
 #include <filesystem>
 #include <fstream>
 
@@ -73,30 +73,41 @@ void RRGrapher::UpdateControls() {
 	}
 
 	if (keyState.Click(RRKeyboardState::Keys::C)) {
-		std::string filename = std::format("{}_{}_{}", heatMap.GetVariableName(), currentLayer, time(NULL));
-		RRGameIO::Instance().MakeScreenshot(sphfio->directories.getScreenshotsDirectory() + filename);
+		std::string filename = fmt::format("{}_{}_{}", heatMap.GetVariableName(), currentLayer, time(NULL));
+		RRGameIO::Instance().MakeScreenshot(sphfio->directories.getScreenshotsDirectory().string() + filename);
 	}
 
 	if (keyState.IsKeyDown(RRKeyboardState::Keys::V)) {
 		if (lastRenderedLayer != currentLayer) {
 			lastRenderedLayer = currentLayer;
-			std::string video_name = std::format("{}_{}", heatMap.GetVariableName(), videoCounter);
-			std::string filename = std::format("{}_{}", video_name, renderFrameCounter++);
-			std::string directory = sphfio->directories.getVideosRawDirectory() + video_name;
+			std::string video_name = fmt::format("{}_{}", heatMap.GetVariableName(), videoCounter);
+			std::string filename = fmt::format("{}_{}", video_name, renderFrameCounter++);
+			std::string directory = sphfio->directories.getVideosRawDirectory().string() + video_name;
 			std::filesystem::create_directory(directory);
-			RRGameIO::Instance().MakeScreenshot(std::format("{0}/{1}", directory, filename));
+			RRGameIO::Instance().MakeScreenshot(fmt::format("{0}/{1}", directory, filename));
 		}
 	}
 	else {
 		renderFrameCounter = 0;
 		lastRenderedLayer = ULLONG_MAX;
 		if (keyState.OldIsKeyDown(RRKeyboardState::Keys::V)) {
-			std::string video_name = std::format("{}_video_{}_{}", sphfio->directories.getExperimentName(), heatMap.GetVariableName(), videoCounter);
-			std::string directory = std::format("{}{}_{}", sphfio->directories.getVideosRawDirectory(), heatMap.GetVariableName(), videoCounter);
-			std::string command = std::format("ffmpeg -framerate 30 -i {}/{}_{}_%%d.png -c:v libx264 -pix_fmt yuv420p {}.mp4", 
-				directory, heatMap.GetVariableName(), videoCounter, video_name);
+			std::string video_name = fmt::format("{}_video_{}_{}", 
+				sphfio->directories.getExperimentName().string(), 
+				heatMap.GetVariableName(), 
+				videoCounter);
+			std::string directory = fmt::format("{}{}_{}", 
+				sphfio->directories.getVideosRawDirectory().string(), 
+				heatMap.GetVariableName(), 
+				videoCounter);
+			std::string command = fmt::format("ffmpeg -framerate 30 -i {}/{}_{}_%%d.png -c:v libx264 -pix_fmt yuv420p {}.mp4", 
+				directory, 
+				heatMap.GetVariableName(), 
+				videoCounter, 
+				video_name);
 
-			std::ofstream stream(std::format("{}{}.bat", sphfio->directories.getVideosDirectory(), video_name));
+			std::ofstream stream(
+				fmt::format("{}{}.bat", sphfio->directories.getVideosDirectory().string(), video_name)
+				);
 			stream << "@echo off" << std::endl << command << std::endl;
 			videoCounter++;
 		}
@@ -144,6 +155,8 @@ void RRGrapher::InitConsoleCommands() {
 			POSSIBLE_VARIABLE_TO_SET(currentLayer);
 			POSSIBLE_VARIABLE_TO_SET(scientificMode);
 			POSSIBLE_VARIABLE_TO_SET(enableCoords);
+			POSSIBLE_VARIABLE_TO_SET(certainTypes);
+			POSSIBLE_VARIABLE_TO_SET(showType);
 #undef POSSIBLE_VARIABLE_TO_SET
 		}
 
@@ -157,6 +170,8 @@ void RRGrapher::InitConsoleCommands() {
 		COMMAND_SET_VARIABLE(currentLayer);
 		COMMAND_SET_VARIABLE(scientificMode);
 		COMMAND_SET_VARIABLE(enableCoords);
+		COMMAND_SET_VARIABLE(certainTypes);
+		COMMAND_SET_VARIABLE(showType);
 #undef COMMAND_SET_VARIABLE
 	});
 
