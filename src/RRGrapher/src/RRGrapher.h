@@ -57,7 +57,6 @@ private:
 	HeatMap heatMap;
 
 	double particleSize{};
-	double simulationTimePerLayer{};
 
 	static constexpr double DEFAULT_SCALE_COORD = 1;
 	double scaleCoord{ DEFAULT_SCALE_COORD };

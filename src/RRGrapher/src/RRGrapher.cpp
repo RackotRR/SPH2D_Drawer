@@ -24,7 +24,6 @@ void RRGrapher::Init() {
 	grid = std::make_unique<sphfio::Grid>(sphfio->makeGrid());
 	area = sphfio::Square{ sphfio->getParams() };
 	particleSize = params->delta;
-	simulationTimePerLayer = params->dt * params->save_step;
 }
 void RRGrapher::Show() {
 	auto& gameIO{ RRGameIO::Instance() };
@@ -136,7 +135,7 @@ void RRGrapher::DrawLegend() const {
 
 void RRGrapher::DrawTime() const {
 	constexpr double t0 = 0;
-	double t = t0 + currentLayer * simulationTimePerLayer;
+	double t = grid->at(currentLayer).time;
 	auto& gameIO{ RRGameIO::Instance() };
 	int w = gameIO.GetWinWidth();
 	RRGameIO::Instance().DrawLine({ (int)(w * 0.05f), 0}, Font::Menu, std::format("{:.3f}", t));
