@@ -59,11 +59,13 @@ Vector2 RRGrapher::getScreenPos(double x, double y) const {
 	};
 }
 
+
 void RRGrapher::DrawLayer() const {
 	auto& layer{ grid->at(currentLayer) };
 	auto& gameIO{ RRGameIO::Instance() };	 
 
 	constexpr int realType = 2;
+	constexpr int nonExistentType = 0;
 	constexpr int virtualType = -2;
 	constexpr RRColor realColor = RRColor::Blue();
 	constexpr RRColor virtualColor = RRColor::Black();
@@ -71,6 +73,9 @@ void RRGrapher::DrawLayer() const {
 	auto& variableName = heatMap.GetVariableName();
 	if (sphfio->isAdditionalValuePresented(variableName)) {
 		for (rr_uint i = 0; i < layer.ntotal; ++i) {
+			if (certainTypes && layer.itype(i) != showType) continue;
+			if (layer.itype(i) == nonExistentType) continue;
+
 			rr_float2 r = layer.r(i);
 			Vector2 screenPos = getScreenPos(r.x, r.y);
 			auto value = layer.getByTag(variableName, i);
@@ -89,6 +94,7 @@ void RRGrapher::DrawLayer() const {
 	else {
 		for (rr_iter i = 0; i < layer.ntotal; ++i) {
 			if (certainTypes && layer.itype(i) != showType) continue;
+			if (layer.itype(i) == nonExistentType) continue;
 			
 			rr_float2 r = layer.r(i);
 			Vector2 screenPos = getScreenPos(r.x, r.y);

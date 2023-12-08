@@ -100,10 +100,13 @@ const RRTexture& RRTextOutput::GetTextureFrom(Font font, const char& c) {
 
 void RRTextOutput::DrawLine(const Vector2& topleft, Font font, std::string_view str) { 
 	// посимвольно проходим по строке и рендерим каждый символ
+	int x = topleft.X;
+	int y = topleft.Y;
 	for (int i = 0; i < str.size(); i++) {
 		const RRTexture& texture{ GetTextureFrom(font, str[i]) };
 		Vector2 size{ texture.GetSize() };
-		SDL_Rect rect{ topleft.X + i * size.X, topleft.Y, size.X, size.Y };
+		x += size.X;
+		SDL_Rect rect{ x, topleft.Y, size.X, size.Y };
 		SDL_RenderCopy(renderer, texture.Get(), nullptr, &rect);
 	}
 }
