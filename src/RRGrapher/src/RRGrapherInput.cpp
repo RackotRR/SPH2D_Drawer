@@ -3,7 +3,7 @@
 #include "RRGameIO.h"
 
 #include "SPH2D_FIO.h"
-#include <fmt/format.h>
+#include <format>
 #include <filesystem>
 #include <fstream>
 
@@ -73,40 +73,40 @@ void RRGrapher::UpdateControls() {
 	}
 
 	if (keyState.Click(RRKeyboardState::Keys::C)) {
-		std::string filename = fmt::format("{}_{}_{}", heatMap.GetVariableName(), currentLayer, time(NULL));
+		std::string filename = std::format("{}_{}_{}", heatMap.GetVariableName(), currentLayer, time(NULL));
 		RRGameIO::Instance().MakeScreenshot(sphfio->directories.getScreenshotsDirectory().string() + filename);
 	}
 
 	if (keyState.IsKeyDown(RRKeyboardState::Keys::V)) {
 		if (lastRenderedLayer != currentLayer) {
 			lastRenderedLayer = currentLayer;
-			std::string video_name = fmt::format("{}_{}", heatMap.GetVariableName(), videoCounter);
-			std::string filename = fmt::format("{}_{}", video_name, renderFrameCounter++);
+			std::string video_name = std::format("{}_{}", heatMap.GetVariableName(), videoCounter);
+			std::string filename = std::format("{}_{}", video_name, renderFrameCounter++);
 			std::string directory = sphfio->directories.getVideosRawDirectory().string() + video_name;
 			std::filesystem::create_directory(directory);
-			RRGameIO::Instance().MakeScreenshot(fmt::format("{0}/{1}", directory, filename));
+			RRGameIO::Instance().MakeScreenshot(std::format("{0}/{1}", directory, filename));
 		}
 	}
 	else {
 		renderFrameCounter = 0;
 		lastRenderedLayer = ULLONG_MAX;
 		if (keyState.OldIsKeyDown(RRKeyboardState::Keys::V)) {
-			std::string video_name = fmt::format("{}_video_{}_{}", 
+			std::string video_name = std::format("{}_video_{}_{}", 
 				sphfio->directories.getExperimentName().string(), 
 				heatMap.GetVariableName(), 
 				videoCounter);
-			std::string directory = fmt::format("{}{}_{}", 
+			std::string directory = std::format("{}{}_{}", 
 				sphfio->directories.getVideosRawDirectory().string(), 
 				heatMap.GetVariableName(), 
 				videoCounter);
-			std::string command = fmt::format("ffmpeg -framerate 30 -i {}/{}_{}_%%d.png -c:v libx264 -pix_fmt yuv420p {}.mp4", 
+			std::string command = std::format("ffmpeg -framerate 30 -i {}/{}_{}_%%d.png -c:v libx264 -pix_std yuv420p {}.mp4", 
 				directory, 
 				heatMap.GetVariableName(), 
 				videoCounter, 
 				video_name);
 
 			std::ofstream stream(
-				fmt::format("{}{}.bat", sphfio->directories.getVideosDirectory().string(), video_name)
+				std::format("{}{}.bat", sphfio->directories.getVideosDirectory().string(), video_name)
 				);
 			stream << "@echo off" << std::endl << command << std::endl;
 			videoCounter++;
