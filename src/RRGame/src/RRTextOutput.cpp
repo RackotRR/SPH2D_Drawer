@@ -33,7 +33,8 @@ void RRTextOutput::Shutdown() {
 
 void RRTextOutput::InitFonts() {
 	auto fonts_dir = std::filesystem::path("fonts");
-	LoadFont(Font::Menu, fonts_dir / "FreeMono.ttf", 24, RRColor::Black(), TTF_STYLE_BOLD);
+	auto font = fonts_dir / "FreeMono.ttf";
+	LoadFont(Font::Menu, font.string(), 24, RRColor::Black(), TTF_STYLE_BOLD);
 	/*
 	המבאגÿכול חהוסü םמגûו רנטפעû
 	*/ 
