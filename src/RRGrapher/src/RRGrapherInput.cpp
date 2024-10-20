@@ -105,9 +105,7 @@ void RRGrapher::UpdateControls() {
 				videoCounter, 
 				video_name);
 
-			std::ofstream stream(
-				std::format("{}{}.bat", sphfio->directories.getVideosDirectory().string(), video_name)
-				);
+			std::ofstream stream(sphfio->directories.getVideosDirectory() / (video_name + ".bat"));
 			stream << "@echo off" << std::endl << command << std::endl;
 			videoCounter++;
 		}
