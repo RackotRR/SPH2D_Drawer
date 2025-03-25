@@ -62,6 +62,7 @@ Vector2 RRGrapher::getScreenPos(double x, double y) const {
 
 void RRGrapher::DrawLayer() const {
 	auto& layer{ grid->at(currentLayer) };
+	auto& r_2D = layer.r_var.get_flt2();
 	auto& gameIO{ RRGameIO::Instance() };	 
 
 	constexpr int realType = 2;
@@ -76,7 +77,7 @@ void RRGrapher::DrawLayer() const {
 			if (certainTypes && layer.itype(i) != showType) continue;
 			if (layer.itype(i) == nonExistentType) continue;
 
-			rr_float2 r = layer.r(i);
+			rr_float2 r = r_2D(i);
 			Vector2 screenPos = getScreenPos(r.x, r.y);
 			auto value = layer.getByTag(variableName, i);
 			gameIO.DrawRectangle(
@@ -96,7 +97,7 @@ void RRGrapher::DrawLayer() const {
 			if (certainTypes && layer.itype(i) != showType) continue;
 			if (layer.itype(i) == nonExistentType) continue;
 			
-			rr_float2 r = layer.r(i);
+			rr_float2 r = r_2D(i);
 			Vector2 screenPos = getScreenPos(r.x, r.y);
 			gameIO.DrawRectangle(
 				Rectangle{ 
@@ -174,14 +175,14 @@ void RRGrapher::ComputeStartScale() {
 	int endY{ gameIO.GetWinHeight() };
 
 	if (gameIO.GetWinWidth() <= gameIO.GetWinHeight()) {
-		scaleCoord = endY / area.size_y;		
+		scaleCoord = endY / area.size.y;
 	}
 	else {
-		scaleCoord = endX / area.size_x;
+		scaleCoord = endX / area.size.x;
 	}
 
-	deltaX = startX - area.origin_x * scaleCoord;
-	deltaY = startY - area.origin_y * scaleCoord;
+	deltaX = startX - area.origin.x * scaleCoord;
+	deltaY = startY - area.origin.y * scaleCoord;
 }
 
 void RRGrapher::Stop() {

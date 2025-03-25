@@ -9,7 +9,7 @@ set(SPH2D_DRAWER_FONTS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/fonts")
 
 if (NOT CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
     # open as submodule
-    set(SPH2D_DRAWER_INSTALL_DESTINATION "SPH2D" CACHE PATH "Install destination")
+    set(SPH2D_DRAWER_INSTALL_DESTINATION "RRSPH" CACHE PATH "Install destination")
 else() 
     # open independently
     set(SPH2D_DRAWER_INSTALL_DESTINATION "SPH2D_Drawer" CACHE PATH "Install destination")

@@ -12,14 +12,14 @@ target_link_libraries(SPH2D_Drawer PRIVATE
     RRHeatMap
 )
 
-if (NOT TARGET SPH2D_FIO)
-    find_package(SPH2D_FIO REQUIRED)
-    add_library(SPH2D_FIO INTERFACE)
-    target_link_libraries(SPH2D_FIO INTERFACE ${SPH2D_FIO_LIBRARIES})
-    target_include_directories(SPH2D_FIO INTERFACE ${SPH2D_FIO_INCLUDE_DIRECTORIES})
+if (NOT TARGET RRSPH_FIO)
+    find_package(RRSPH_FIO REQUIRED)
+    add_library(RRSPH_FIO INTERFACE)
+    target_link_libraries(RRSPH_FIO INTERFACE ${RRSPH_FIO_LIBRARIES})
+    target_include_directories(RRSPH_FIO INTERFACE ${RRSPH_FIO_INCLUDE_DIRECTORIES})
 endif()
 
-target_link_libraries(SPH2D_Drawer PRIVATE SPH2D_FIO)
+target_link_libraries(SPH2D_Drawer PRIVATE RRSPH_FIO)
 
 install(TARGETS SPH2D_Drawer DESTINATION ${SPH2D_DRAWER_INSTALL_DESTINATION})
 install(DIRECTORY ${SPH2D_DRAWER_FONTS_DIR} DESTINATION ${SPH2D_DRAWER_INSTALL_DESTINATION})
